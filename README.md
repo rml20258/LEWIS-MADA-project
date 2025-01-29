@@ -1,3 +1,6 @@
+# Project ownership
+This is Rayleen Lewis's MADA project (Spring 2025).
+
 # Overview
 
 A template file and folder structure for a data analysis project/paper done with R/Quarto/Github. Other components (e.g., other programming languages) can be added as needed. 

@@ -1,6 +1,6 @@
 ---
-title: "Example Manuscript Template for a Data Analysis Project"
-author: ""
+title: "Effect of COVID-19 burden on changes in HPV vaccination coverage among females between 2019 and 2022"
+author: "Rayleen Lewis"
 format:
   docx:
     toc: false
@@ -12,10 +12,6 @@ csl: ../../assets/american-journal-of-epidemiology.csl
 
 
 
-
-The structure below is one possible setup for a manuscript, or a general data analysis project (including the course project). Adjust as needed. 
-You don't need to have exactly these sections, but the content covering those sections should be addressed.
-
 This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
 
 
@@ -23,28 +19,25 @@ This uses MS Word as output format. [See here](https://quarto.org/docs/output-fo
 # load a few R packages
 library(here)
 library(knitr)
+library(tidyverse)
+library(openxlsx)
 ```
 
 
 **Authors**  
 
-* First Autor$^{1,2,*}$ (ORCID: 0000-0000-1234-5678) 
-* Second Author$^{3, *}$
-* Third Autor$^{3, \dagger}$
-* Last Author$^{1, 2, \land}$ 
+* Rayleen Lewis$^{1}$ (ORCID: 0000-0000-1234-5678) 
+
 
 **Author affiliations**  
 
 1. College of Public Health, University of Georgia, Athens, GA, USA.
-2. Another Affiliation, Athens, GA, USA.
-3. Yet another Affiliation.
 
-$*$ These authors contributed equally to this work.
 
 $\land$ Corresponding author: some@email.com
 
 $\dagger$ Disclaimer: The opinions expressed in this article are the
-author's own and don't reflect their employer.
+author's own and don't reflect their employer or University.
 
 
 {{< pagebreak >}}
@@ -67,11 +60,9 @@ _Provide enough background on your topic that others can understand the why and 
 _Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
 
 ## Questions/Hypotheses to be addressed
-_State the research questions you plan to answer with this analysis._
+The objective of this work is to determine if HPV vaccination coverage changed between 2019 and 2022 among countries offering HPV vaccination as of 2019, and if so, are these changes correlated with COVID-19 burden in 2020-2021. I hypothesize that HPV vaccination coverage was lower in 2022 than 2019 among countries with high burden of COVID-19 in 2020-2021 and comparable in countries with a low COVID-19 burden.
 
-To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above and have the right bibtex key. Then you can include like this:
 
-Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
 
 
 
@@ -79,8 +70,7 @@ Examples of reproducible research projects can for instance be found in [@mckay2
 
 
 # Methods 
-
-_Describe your methods. That should describe the data, the cleaning processes, and the analysis approaches. You might want to provide a shorter description here and all the details in the supplement._
+Briefly, all datasets will be reduced to include only countries with vaccination coverage estimates in both 2019 and 2022. Average coverage will be compared in 2022 to 2019. Multivariable linear regression modeling the difference in coverage between the two years as the outcome will be conducting using measures of COVID-19 burden, HPV vaccination program characteristics, country income information, and country-level demographics. Measure(s) of COVID-19 burden will be considered the explanatory variable of interest. Other characteristics will be considered for adjustment. 
 
 
 ## Schematic of workflow
@@ -99,11 +89,23 @@ knitr::include_graphics(here("assets","antigen-recognition.png"))
 
 
 ## Data aquisition
-_As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
+Data on HPV vaccination coverage and vaccination program details are available at the country level through the World Health Organization's (WHO) [HPV Dashboard](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/human-papillomavirus-vaccines-(HPV)/hpv-clearing-house/hpv-dashboard). HPV Dashboard include country income level (low, lower middle, upper middle, high), whether there was a national HPV vaccine schedule, year of vaccine introduction, primary delivery strategy (school-based, facility based, varies by region, mixed), number of doses in routine schedule, whether the program is gender neutral (target males and females), WHO region, and year-specific coverage from 2010 to 2023.
 
+Country-specific weekly COVID-19 case and death counts are available from starting in 1/4/2020 through the WHO [COVID-19 dashboard](https://data.who.int/dashboards/covid19/data?n=o). In August 2023, WHO stopped requiring weekly reporting, although some countries continued to voluntarily report COVID-19 data.
+
+Additional country-level covariates were collected from other publicly available data sources. Information on country income level by year is available through the [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups#:~:text=For%20the%20current%202025%20fiscal,those%20with%20a%20GNI%20per). Country-level demographics including life expectancy of females at birth and population size were available from the [United Nations](https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=CSV%20format)
+
+All data sources are publicly available for download and were downloaded on January 26-27, 2025. 
 
 ## Data import and cleaning
 _Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
+```{r, echo=FALSE}
+#world_bank <- read.xlsx("world-bank-country-income.xlsx", sheet = "Country Analytical History")
+
+
+```
+
+
 
 
 ## Statistical analysis
@@ -192,4 +194,7 @@ Note that this cited reference will show up at the end of the document, the refe
 # References
 
 
+To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above and have the right bibtex key. Then you can include like this:
+
+Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
 

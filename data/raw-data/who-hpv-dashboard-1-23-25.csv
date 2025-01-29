@@ -1,0 +1,197 @@
+COUNTRYNAME,ISO_3_CODE,WHO_REGION,WB_INCOME,HPV_NATIONAL_SCHEDULE,HPV_YEAR_INTRODUCTION,HPV_PRIM_DELIV_STRATEGY,HPV_AGEADMINISTERED,HPV_SEX,HPV_INT_DOSES,HPV1_COVERAGELASTYEAR,HPVC_COVERAGELASTYEAR
+Afghanistan,AFG,EMR,Low income,No,,,,,Not yet introduced,,
+Albania,ALB,EUR,Upper middle income,Yes,2022,Facility-based,13,Female,1 dose,0.74,0.74
+Algeria,DZA,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Andorra,AND,EUR,High income,Yes,2014,School-based,12,Both sexes,2 doses (6 months),0.85,0.85
+Angola,AGO,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Antigua and Barbuda,ATG,AMR,High income,Yes,2018,Facility-based,9-13,Both sexes,2 doses (6 months),0.02,0.01
+Argentina,ARG,AMR,Upper middle income,Yes,2011,Varies by region/province,11,Both sexes,1 dose,0.63,0.36
+Armenia,ARM,EUR,Upper middle income,Yes,2017,Facility-based,14,Female,2 doses (6 months),0.45,0.41
+Australia,AUS,WPR,High income,Yes,2007,School-based,12-13,Both sexes,1 dose,0.71,0.71
+Austria,AUT,EUR,High income,Yes,2014,School-based,9,Both sexes,2 doses (6 months),0.56,0.53
+Azerbaijan,AZE,EUR,Upper middle income,No,,,,,Not yet introduced,,
+Bahamas,BHS,AMR,High income,Yes,2015,School-based,9-10,Both sexes,,0.36,0.09
+Bahrain,BHR,EMR,High income,Yes,2023,,12-13,Both sexes,,,
+Bangladesh,BGD,SEAR,Lower middle income,Yes,2023,,10-14,Female,1 dose,0.21,0.21
+Barbados,BRB,AMR,High income,Yes,2014,School-based,10-11,Both sexes,1 dose,0.5,0.5
+Belarus,BLR,EUR,Upper middle income,No,,,,,Not yet introduced,,
+Belgium,BEL,EUR,High income,Yes,2007,School-based,12-14,Both sexes,2 doses (6 months),0.8,0.72
+Belize,BLZ,AMR,Upper middle income,Yes,2016,School-based,9-14,Both sexes,1 dose,0.41,0.41
+Benin,BEN,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Bhutan,BTN,SEAR,Lower middle income,Yes,2009,School-based,12,Both sexes,2 doses (6 months),0.9,0.87
+Bolivia (Plurinational State of),BOL,AMR,Lower middle income,Yes,2017,School-based,10,Female,1 dose,0.67,0.67
+Bosnia and Herzegovina,BIH,EUR,Upper middle income,Yes,2022,Mixed,11-14,Both sexes,2 doses (6 months),0.05,0.05
+Botswana,BWA,AFR,Upper middle income,Yes,2015,Mixed,9-13,Female,2 doses (6 months),0.67,0.32
+Brazil,BRA,AMR,Upper middle income,Yes,2013,Facility-based,9-14,Both sexes,1 dose,0.87,0.73
+Brunei Darussalam,BRN,WPR,High income,Yes,2012,Mixed,13,Female,2 doses (6 months),0.85,0.83
+Bulgaria,BGR,EUR,Upper middle income,Yes,2017,Facility-based,12-13,Female,2 doses (6 months),0.1,0.06
+Burkina Faso,BFA,AFR,Low income,Yes,2022,,,Female,1 dose,0.97,0.97
+Burundi,BDI,AFR,Low income,No,,,,,Not yet introduced,,
+Cabo Verde,CPV,AFR,Lower middle income,Yes,2021,,,Both sexes,1 dose,0.93,0.93
+Cambodia,KHM,WPR,Lower middle income,Yes,2023,,9,Female,1 dose,0.91,0.91
+Cameroon,CMR,AFR,Lower middle income,Yes,2020,School-based,9,Both sexes,1 dose,0.66,0.66
+Canada,CAN,AMR,High income,Yes,2009,School-based,12,Both sexes,1 dose,0.86,0.86
+Central African Republic,CAF,AFR,Low income,No,,,,,Not yet introduced,,
+Chad,TCD,AFR,Low income,No,,,,,Not yet introduced,,
+Chile,CHL,AMR,High income,Yes,2014,School-based,9,Both sexes,2 doses (12 months),0.88,0.83
+China,CHN,WPR,Upper middle income,No,,,,,Not yet introduced,,
+Colombia,COL,AMR,Upper middle income,Yes,2012,School-based,9-17,Both sexes,1 dose,0.52,0.52
+Comoros,COM,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Congo,COG,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Cook Islands,COK,WPR,NA,Yes,2011,School-based,9,Female,2 doses (6 months),0.94,0.5
+Costa Rica,CRI,AMR,Upper middle income,Yes,2019,School-based,10,Female,2 doses (6 months),0.77,0.66
+Côte d'Ivoire,CIV,AFR,Lower middle income,Yes,2019,School-based,9,Female,1 dose,0.73,0.73
+Croatia,HRV,EUR,High income,Yes,2016,School-based,14,Both sexes,2 doses (6 months),0.55,0.55
+Cuba,CUB,AMR,Upper middle income,No,,,,,Not yet introduced,,
+Cyprus,CYP,EUR,High income,Yes,2016,School-based,11-14,Both sexes,2 doses (6 months),0.76,0.92
+Czechia,CZE,EUR,High income,Yes,2012,Facility-based,13,Both sexes,2 doses (6 months),0.72,0.72
+Democratic People's Republic of Korea,PRK,SEAR,Low income,No,,,,,Not yet introduced,,
+Democratic Republic of the Congo,COD,AFR,Low income,No,,,,,Not yet introduced,,
+Denmark,DNK,EUR,High income,Yes,2007,Facility-based,12-14,Both sexes,2 doses (6 months),0.9,0.8
+Djibouti,DJI,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Dominica,DMA,AMR,Upper middle income,Yes,2019,School-based,11-12,Both sexes,1 dose,0.65,0.65
+Dominican Republic,DOM,AMR,Upper middle income,Yes,2017,Facility-based,9-14,Female,1 dose,0.66,0.66
+Ecuador,ECU,AMR,Upper middle income,Yes,2014,School-based,9-14,Both sexes,2 doses (6 months),0.79,0.5
+Egypt,EGY,EMR,Lower middle income,No,,,,,Not yet introduced,,
+El Salvador,SLV,AMR,Upper middle income,Yes,2020,School-based,9,Both sexes,1 dose,0.76,0.36
+Equatorial Guinea,GNQ,AFR,Upper middle income,No,,,,,Not yet introduced,,
+Eritrea,ERI,AFR,Low income,Yes,2022,,,Female,2 doses (6 months),0.27,0.78
+Estonia,EST,EUR,High income,Yes,2018,School-based,12-18,Both sexes,1 dose,0.6,0.52
+Eswatini,SWZ,AFR,Lower middle income,Yes,2023,School-based,9,Female,1 dose,0.59,0.59
+Ethiopia,ETH,AFR,Low income,Yes,2018,School-based,14,Female,1 dose,0.6,0.29
+Fiji,FJI,WPR,Upper middle income,Yes,2013,School-based,8-13,Female,2 doses (6 months),0.86,0.68
+Finland,FIN,EUR,High income,Yes,2013,School-based,10-12,Both sexes,2 doses (6 months),0.77,0.7
+France,FRA,EUR,High income,Yes,2006,Facility-based,11-14,Both sexes,2 doses (6 months),0.55,0.45
+Gabon,GAB,AFR,Upper middle income,No,,,,,Not yet introduced,,
+Gambia,GMB,AFR,Low income,Yes,2019,School-based,9-14,Female,2 doses (12 months),0.23,
+Georgia,GEO,EUR,Upper middle income,Yes,2019,Facility-based,10-12,Both sexes,2 doses (6 months),0.59,0.4
+Germany,DEU,EUR,High income,Yes,2007,Facility-based,9-14,Both sexes,2 doses (6 months),0.66,0.54
+Ghana,GHA,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Greece,GRC,EUR,High income,Yes,2009,Facility-based,11-12,Both sexes,2 doses (6 months),,
+Greenland,GRL,EUR,High income,Yes,2007,Facility-based,12-14,Both sexes,2 doses (6 months),0.84,0.7
+Grenada,GRD,AMR,Upper middle income,Yes,2019,School-based,9,Female,1 dose,0.01,0.01
+Guatemala,GTM,AMR,Upper middle income,Yes,2018,School-based,10-14,Both sexes,1 dose,0.48,0.48
+Guinea,GIN,AFR,Lower middle income,No,,,,,Not yet introduced,,
+Guinea-Bissau,GNB,AFR,Low income,No,,,,,Not yet introduced,,
+Guyana,GUY,AMR,High income,Yes,2011,School-based,9-16,Both sexes,1 dose,0.4,0.4
+Haiti,HTI,AMR,Lower middle income,No,,,,,Not yet introduced,,
+Honduras,HND,AMR,Lower middle income,Yes,2016,School-based,12-15,Female,1 dose,0.81,0.61
+Hungary,HUN,EUR,High income,Yes,2014,School-based,12,Both sexes,2 doses (6 months),0.75,0.75
+Iceland,ISL,EUR,High income,Yes,2011,School-based,12,Both sexes,2 doses (6 months),0.9,0.84
+India,IND,SEAR,Lower middle income,No,,,,,Not yet introduced,,
+Indonesia,IDN,SEAR,Upper middle income,Yes,2017,School-based,11,Female,2 doses (12 months),0.82,0.29
+Iran (Islamic Republic of),IRN,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Iraq,IRQ,EMR,Upper middle income,No,,,,,Not yet introduced,,
+Ireland,IRL,EUR,High income,Yes,2010,School-based,12,Both sexes,1 dose,0.84,0.84
+Israel,ISR,EUR,High income,Yes,2010,School-based,13,Both sexes,2 doses (6 months),0.53,0.6
+Italy,ITA,EUR,High income,Yes,2009,Varies by region/province,11,Both sexes,2 doses (6 months),0.63,0.46
+Jamaica,JAM,AMR,Upper middle income,Yes,2017,School-based,11-12,Both sexes,1 dose,0.08,0.08
+Japan,JPN,WPR,High income,Yes,2013,Facility-based,13,Female,2 doses (6 months),0.46,0.35
+Jordan,JOR,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Kazakhstan,KAZ,EUR,Upper middle income,Yes,2024,School-based,11,Female,2 doses (6 months),,
+Kenya,KEN,AFR,Lower middle income,Yes,2019,Facility-based,10,Female,1 dose,0.64,0.33
+Kiribati,KIR,WPR,Lower middle income,Yes,2023,,9,Female,1 dose,0.54,0.54
+Kuwait,KWT,EMR,High income,Yes,2023,School-based,11-12,Both sexes,,,
+Kyrgyzstan,KGZ,EUR,Lower middle income,Yes,2022,School-based,,Female,1 dose,0.68,0.46
+Lao People's Democratic Republic,LAO,WPR,Lower middle income,Yes,2020,School-based,10,Female,1 dose,0.68,0.44
+Latvia,LVA,EUR,High income,Yes,2010,Facility-based,12,Both sexes,2 doses (6 months),0.82,0.71
+Lebanon,LBN,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Lesotho,LSO,AFR,Lower middle income,Yes,2022,,,Female,2 doses (6 months),0.44,0.64
+Liberia,LBR,AFR,Low income,Yes,2019,Mixed,9,Female,1 dose,0.79,0.4
+Libya,LBY,EMR,Upper middle income,Yes,2013,,12,Female,,0.71,0.54
+Lithuania,LTU,EUR,High income,Yes,2016,Facility-based,11,Both sexes,2 doses (6 months),0.56,0.43
+Luxembourg,LUX,EUR,High income,Yes,2008,Facility-based,9-13,Both sexes,2 doses (6 months),0.37,0.14
+Madagascar,MDG,AFR,Low income,No,,,,,Not yet introduced,,
+Malawi,MWI,AFR,Low income,Yes,2019,School-based,9,Female,1 dose,0.68,0.27
+Malaysia,MYS,WPR,Upper middle income,Yes,2010,School-based,13,Female,1 dose,0.67,0
+Maldives,MDV,SEAR,Upper middle income,Yes,2019,School-based,10,Female,1 dose,0.59,0.61
+Mali,MLI,AFR,Low income,Yes,2024,Mixed,10,Female,1 dose,,
+Malta,MLT,EUR,High income,Yes,2013,Facility-based,12,Both sexes,2 doses (6 months),0.78,0.73
+Marshall Islands,MHL,WPR,Upper middle income,Yes,2009,Mixed,11,Female,2 doses (6 months),0.58,0.27
+Mauritania,MRT,AFR,Lower middle income,Yes,2021,,,Female,1 dose,0.18,0.14
+Mauritius,MUS,AFR,Upper middle income,Yes,2016,School-based,9,Both sexes,2 doses (6 months),0.57,0.26
+Mexico,MEX,AMR,Upper middle income,Yes,2012,School-based,9-11,Female,1 dose,0.62,0.62
+Micronesia (Federated States of),FSM,WPR,Lower middle income,Yes,2010,School-based,10,Female,2 doses (6 months),0.62,0.48
+Monaco,MCO,EUR,High income,Yes,2006,Facility-based,11,Both sexes,2 doses (6 months),,
+Mongolia,MNG,WPR,Lower middle income,Yes,2024,School-based,11,Both sexes,1 dose,,
+Montenegro,MNE,EUR,Upper middle income,Yes,2022,Facility-based,9-14,Female,1 dose,0.19,0.19
+Morocco,MAR,EMR,Lower middle income,Yes,2022,,,Female,2 doses (6 months),,
+Mozambique,MOZ,AFR,Low income,Yes,2021,School-based,9,Female,1 dose,0.7,0.57
+Myanmar,MMR,SEAR,Lower middle income,Yes,2020,School-based,9,Female,1 dose,0.77,0.77
+Namibia,NAM,AFR,Upper middle income,No,,,,,Not yet introduced,,
+Nauru,NRU,WPR,High income,Yes,2021,,11,Female,2 doses (6 months),,
+Nepal,NPL,SEAR,Lower middle income,No,,,,,Not yet introduced,,
+Netherlands (Kingdom of the),NLD,EUR,High income,Yes,2010,Facility-based,12,Both sexes,2 doses (6 months),0.6,0.6
+New Zealand,NZL,WPR,High income,Yes,2008,Mixed,11,Both sexes,2 doses (6 months),0.7,0.66
+Nicaragua,NIC,AMR,Lower middle income,Yes,2023,School-based,12-14,Female,2 doses (6 months),0.78,
+Niger,NER,AFR,Low income,No,,,,,Not yet introduced,,
+Nigeria,NGA,AFR,Lower middle income,Yes,2023,Mixed,9-14,Female,1 dose,0.27,0.27
+Niue,NIU,WPR,NA,Yes,2019,School-based,12,Both sexes,2 doses (6 months),1,1
+North Macedonia,MKD,EUR,Upper middle income,Yes,2009,School-based,12,Both sexes,2 doses (6 months),0.46,0.4
+Norway,NOR,EUR,High income,Yes,2009,School-based,12,Both sexes,2 doses (6 months),0.93,0.94
+Oman,OMN,EMR,High income,No,,,,,Not yet introduced,,
+Pakistan,PAK,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Palau,PLW,WPR,Upper middle income,Yes,2008,School-based,,Female,2 doses (6 months),0.89,0.25
+Panama,PAN,AMR,High income,Yes,2008,Mixed,10,Both sexes,2 doses (6 months),0.79,0.66
+Papua New Guinea,PNG,WPR,Lower middle income,No,,,,,Not yet introduced,,
+Paraguay,PRY,AMR,Upper middle income,Yes,2013,Mixed,10,Both sexes,1 dose,0.44,0.22
+Peru,PER,AMR,Upper middle income,Yes,2015,School-based,10,Both sexes,1 dose,0.74,0.74
+Philippines,PHL,WPR,Lower middle income,Yes (Partial),2016,School-based,9-14,Female,2 doses (6 months),0.26,0.1
+Poland,POL,EUR,High income,Yes,2023,Facility-based,11-14,Both sexes,2 doses (6 months),,
+Portugal,PRT,EUR,High income,Yes,2008,Facility-based,10,Both sexes,2 doses (6 months),0.93,0.9
+Qatar,QAT,EMR,High income,Yes,2023,,,Both sexes,2 doses (6 months),,
+Republic of Korea,KOR,WPR,High income,Yes,2016,Facility-based,12,Female,2 doses (6 months),0.84,0.65
+Republic of Moldova,MDA,EUR,Upper middle income,Yes (Partial),2019,School-based,10,Female,2 doses (6 months),0.54,0.44
+Romania,ROU,EUR,High income,Yes,2023,Facility-based,11-14,Both sexes,2 doses (6 months),0.06,0.06
+Russian Federation,RUS,EUR,Upper middle income,No,,,,,Not yet introduced,,
+Rwanda,RWA,AFR,Low income,Yes,2011,School-based,12,Female,2 doses (6 months),0.79,0
+Saint Kitts and Nevis,KNA,AMR,High income,Yes,2019,School-based,11,Both sexes,1 dose,0.64,0.64
+Saint Lucia,LCA,AMR,Upper middle income,Yes,2019,School-based,11-12,Both sexes,1 dose,0.81,0.81
+Saint Vincent and the Grenadines,VCT,AMR,Upper middle income,Yes,2017,School-based,11-12,Female,1 dose,,
+Samoa,WSM,WPR,Lower middle income,Yes,2022,School-based,13,Female,1 dose,0.87,0.87
+San Marino,SMR,EUR,High income,Yes,2008,Facility-based,11-14,Both sexes,2 doses (6 months),0.58,0.52
+Sao Tome and Principe,STP,AFR,Lower middle income,Yes,2021,,,Female,1 dose,0.8,0.8
+Saudi Arabia,SAU,EMR,High income,Yes,2022,School-based,,Female,2 doses (12 months),,0.39
+Senegal,SEN,AFR,Lower middle income,Yes,2018,Facility-based,9,Female,2 doses (6 months),0.47,0.25
+Serbia,SRB,EUR,Upper middle income,Yes,2022,,,Both sexes,2 doses (6 months),0.05,0.02
+Seychelles,SYC,AFR,High income,Yes,2014,School-based,10,Both sexes,2 doses (6 months),0.81,0.54
+Sierra Leone,SLE,AFR,Low income,Yes,2022,,10,Female,1 dose,0.39,0.39
+Singapore,SGP,WPR,High income,Yes,2010,School-based,9-26,Female,2 doses (6 months),0.69,0.69
+Slovakia,SVK,EUR,High income,Yes,2022,,12,Both sexes,2 doses (6 months),0.08,0.1
+Slovenia,SVN,EUR,High income,Yes,2009,School-based,11,Both sexes,2 doses (6 months),0.45,0.45
+Solomon Islands,SLB,WPR,Lower middle income,Yes,2019,Mixed,9,Female,1 dose,0.69,0.69
+Somalia,SOM,EMR,Low income,No,,,,,Not yet introduced,,
+South Africa,ZAF,AFR,Upper middle income,Yes,2014,School-based,9,Female,1 dose,0.7,0.72
+South Sudan,SSD,AFR,Low income,No,,,,,Not yet introduced,,
+Spain,ESP,EUR,High income,Yes,2007,Mixed,12,Both sexes,1 dose,0.89,0.75
+Sri Lanka,LKA,SEAR,Lower middle income,Yes,2017,Mixed,10-11,Female,2 doses (6 months),0.31,0.25
+Sudan,SDN,EMR,Low income,No,,,,,Not yet introduced,,
+Suriname,SUR,AMR,Upper middle income,Yes,2013,School-based,9-13,Both sexes,1 dose,0,0
+Svalbard and Jan Mayen,SJM,EUR,,Yes,2009,School-based,12,Both sexes,2 doses (6 months),0.95,0.9
+Sweden,SWE,EUR,High income,Yes,2010,School-based,10-11,Both sexes,2 doses (6 months),0.92,0.88
+Switzerland,CHE,EUR,High income,Yes,2006,Mixed,11-14,Both sexes,2 doses (6 months),0.77,0.7
+Syrian Arab Republic,SYR,EMR,Low income,No,,,,,Not yet introduced,,
+Tajikistan,TJK,EUR,Lower middle income,No,,,,,Not yet introduced,,
+Thailand,THA,SEAR,Upper middle income,Yes,2017,School-based,11,Female,2 doses (6 months),0.43,0.08
+Timor-Leste,TLS,SEAR,Lower middle income,Yes,2024,School-based,11-14,Female,1 dose,,
+Togo,TGO,AFR,Low income,Yes,2023,School-based,9-14,Female,1 dose,0.46,0.46
+Tonga,TON,WPR,Upper middle income,Yes,2022,,,Female,1 dose,0.3,0.3
+Trinidad and Tobago,TTO,AMR,High income,Yes,2013,Mixed,11-15,Both sexes,2 doses (6 months),0.31,0.08
+Tunisia,TUN,EMR,Lower middle income,No,,,,,Not yet introduced,,
+Türkiye,TUR,EUR,Upper middle income,No,,,,,Not yet introduced,,
+Turkmenistan,TKM,EUR,Upper middle income,Yes,2016,Mixed,9,Both sexes,2 doses (6 months),0.99,0.99
+Tuvalu,TUV,WPR,Upper middle income,Yes,2021,,,Female,1 dose,0.84,0.84
+Uganda,UGA,AFR,Low income,Yes,2015,School-based,10,Female,1 dose,0.99,0.98
+Ukraine,UKR,EUR,Lower middle income,No,,,,,Not yet introduced,,
+United Arab Emirates,ARE,EMR,High income,Yes,2018,School-based,13,Both sexes,2 doses (6 months),0.42,0.39
+United Kingdom of Great Britain and Northern Ireland,GBR,EUR,High income,Yes,2008,School-based,12-13,Both sexes,1 dose,0.68,0.68
+United Republic of Tanzania,TZA,AFR,Lower middle income,Yes,2018,Mixed,14,Female,1 dose,0.99,0.91
+United States of America,USA,AMR,High income,Yes,2006,Facility-based,11-12,Both sexes,2 doses (6 months),0.73,0.52
+Uruguay,URY,AMR,High income,Yes,2013,Facility-based,11,Both sexes,2 doses (6 months),0.67,0.41
+Uzbekistan,UZB,EUR,Lower middle income,Yes,2019,School-based,9,Female,2 doses (6 months),0.94,0.96
+Vanuatu,VUT,WPR,Lower middle income,Yes,2023,School-based,9,Female,1 dose,0.41,0.41
+Venezuela (Bolivarian Republic of),VEN,AMR,NA,No,,,,,Not yet introduced,,
+Viet Nam,VNM,WPR,Lower middle income,No,,,,,Not yet introduced,,
+Yemen,YEM,EMR,Low income,No,,,,,Not yet introduced,,
+Zambia,ZMB,AFR,Lower middle income,Yes,2019,School-based,14,Female,1 dose,0.56,0.56
+Zimbabwe,ZWE,AFR,Lower middle income,Yes,2018,Mixed,10,Female,2 doses (12 months),0.54,0.24
