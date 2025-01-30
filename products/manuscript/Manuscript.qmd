@@ -21,6 +21,7 @@ library(here)
 library(knitr)
 library(tidyverse)
 library(openxlsx)
+library(naniar)
 ```
 
 
@@ -34,7 +35,7 @@ library(openxlsx)
 1. College of Public Health, University of Georgia, Athens, GA, USA.
 
 
-$\land$ Corresponding author: some@email.com
+$\land$ Corresponding author: rml20258@uga.edu
 
 $\dagger$ Disclaimer: The opinions expressed in this article are the
 author's own and don't reflect their employer or University.
@@ -57,7 +58,7 @@ _Write a summary of your project._
 _Provide enough background on your topic that others can understand the why and how of your analysis_ 
 
 ## Description of data and data source
-_Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+Information on the dat sources can be found in the Data Acquisition and Data Importing and Cleaning sections below. Briefly, all datasets will be reduced to include only countries with vaccination coverage estimates in both 2019 and 2022. Average coverage will be compared in 2022 to 2019. Multivariable linear regression modeling the difference in coverage between the two years as the outcome will be conducting using measures of COVID-19 burden, HPV vaccination program characteristics, country income information, and country-level demographics. Measure(s) of COVID-19 burden will be considered the explanatory variable of interest. Other characteristics will be considered for adjustment. 
 
 ## Questions/Hypotheses to be addressed
 The objective of this work is to determine if HPV vaccination coverage changed between 2019 and 2022 among countries offering HPV vaccination as of 2019, and if so, are these changes correlated with COVID-19 burden in 2020-2021. I hypothesize that HPV vaccination coverage was lower in 2022 than 2019 among countries with high burden of COVID-19 in 2020-2021 and comparable in countries with a low COVID-19 burden.
@@ -89,7 +90,7 @@ knitr::include_graphics(here("assets","antigen-recognition.png"))
 
 
 ## Data aquisition
-Data on HPV vaccination coverage and vaccination program details are available at the country level through the World Health Organization's (WHO) [HPV Dashboard](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/human-papillomavirus-vaccines-(HPV)/hpv-clearing-house/hpv-dashboard). HPV Dashboard include country income level (low, lower middle, upper middle, high), whether there was a national HPV vaccine schedule, year of vaccine introduction, primary delivery strategy (school-based, facility based, varies by region, mixed), number of doses in routine schedule, whether the program is gender neutral (target males and females), WHO region, and year-specific coverage from 2010 to 2023.
+Data on HPV vaccination coverage and vaccination program details are available at the country level through the World Health Organization's (WHO) [HPV Dashboard](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/human-papillomavirus-vaccines-(HPV)/hpv-clearing-house/hpv-dashboard). Briefly, coverage data reflect administrative and official HPV vaccination coverage reported annually through the WHO/UNICEF Joint Reporting Form on Immunization. HPV Dashboard include country income level (low, lower middle, upper middle, high), whether there was a national HPV vaccine schedule, year of vaccine introduction, primary delivery strategy (school-based, facility based, varies by region, mixed), number of doses in routine schedule, whether the program is gender neutral (target males and females), WHO region, and year-specific coverage from 2010 to 2023. 
 
 Country-specific weekly COVID-19 case and death counts are available from starting in 1/4/2020 through the WHO [COVID-19 dashboard](https://data.who.int/dashboards/covid19/data?n=o). In August 2023, WHO stopped requiring weekly reporting, although some countries continued to voluntarily report COVID-19 data.
 
@@ -99,9 +100,94 @@ All data sources are publicly available for download and were downloaded on Janu
 
 ## Data import and cleaning
 _Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
-```{r, echo=FALSE}
-#world_bank <- read.xlsx("world-bank-country-income.xlsx", sheet = "Country Analytical History")
+Each data source must be imported. Data sources can be merged based on country. Each dataset will be restricted to countries with vaccination coverage estimates in 2019 and 2022. 
 
+#### HPV coverage and vaccination program data
+There are two data files to be imported for the HPV vaccination data, one file contains yearly coverage estimates and the other contains information about the HPV vaccination program.
+
+##### HPV vaccination coverage
+A total of 196 countries are included in the data set. Coverage estimates are available from 2010 to 2023, but most countries are missing on some years of data. Data manipulation will be needed to restrict to the years of interest and convert data form long to wide.
+
+```{r}
+#Importing yearly HPV vaccination coverage
+hpv_coverage_raw <- read.xlsx(here("data","raw-data","Human Papillomavirus (HPV) vaccination coverage 2025-21-01 11-57 UTC.xlsx"), sheet = "Sheet1", colNames = TRUE)
+
+#There are missing data, data will need to be converted from long to wide format to get a better sense of complete data
+gg_miss_var(hpv_coverage_raw)
+#Gives total number of countries in the dataset
+table(hpv_coverage_raw$YEAR)
+
+```
+
+##### HPV vaccination program characteristics
+A total of 196 countries are included in the data set. About one third of countries are missing year of introduction, and a few are missing country income. Other characteristics (e.g., delivery strategy) appear complete.
+```{r}
+#Importing HPV vaccination program characteristics
+hpv_program_raw <- read.csv(here("data","raw-data","who-dashboard-1dosecoverage-1-27-25.csv"), header = TRUE)
+
+#There are missing data, year of introduction is missing for about a third of countries
+gg_miss_var(hpv_program_raw)
+#Gives total number of countries in the dataset
+nrow(hpv_program_raw)
+```
+
+#### COVID19 data 
+This data source includes weekly COVD case count data on 239 countries. The data set includes 440640 rows, but about half have missing data on new case counts. Completeness of data will have to be reviewed once the data are restricted to countries with vaccination coverage estimates in the years of interest.
+```{r}
+#Importing HPV vaccination program characteristics
+covid_raw <- read.csv(here("data","raw-data","WHO-COVID-19-global-daily-data.csv"), header = TRUE)
+
+#There are missing data, year of introduction is missing for about a third of countries
+gg_miss_var(covid_raw)
+#Gives total number of countries in the dataset
+nrow(covid_raw)
+#Getting the number of countires - 239
+countries <- table(covid_raw$Country_code)
+dim(countries)
+```
+
+#### United Nations data 
+There are 238 countries with yearly data from 1950 to 2023. Data appear mostly complete (ISO2 Alpha-code is missing for some rows but this is missing for all World and Region specific rows since this is a code to indicate country). Data will be restricted to the two years of interest during the next part of the project.
+```{r}
+
+u_n_raw <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates")
+header_row <- 10
+column_names_un <- as.character(unlist(u_n_raw[header_row, ]))
+
+# Read the data again, skipping the rows before the header
+u_n <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates", startRow = 18, colNames = FALSE)
+colnames(u_n) <- column_names_un
+
+#Getting number of countries
+un_countries <- table(u_n$`ISO3 Alpha-code`)
+dim(un_countries)
+#238 countries
+
+#Getting number of years
+table(u_n$Year)
+#Year ranges from 1950 to 2023
+
+#There are missing data, year of introduction is missing for about a third of countries
+gg_miss_var(u_n)
+```
+
+
+#### World Bank data 
+There are 218 countries with yearly data from 1987 to 2023. Some data are missing, but this is mostly complete. Data will be restricted to the two years of interest during the next part of the project.
+```{r, echo=FALSE}
+
+world_bank_raw <- read.xlsx(here("data","raw-data","world-bank-country-income.xlsx"), sheet = "Country Analytical History")
+header_row <- 4
+column_names <- as.character(unlist(world_bank_raw[header_row, ]))
+
+# Read the data again, skipping the rows before the header
+world_bank <- read.xlsx(here("data","raw-data","world-bank-country-income.xlsx"), sheet = "Country Analytical History", startRow = 12, colNames = FALSE)
+colnames(world_bank) <- column_names
+colnames(world_bank)[c(1, 2)] <- c("country_code", "country")
+
+world_bank <- as_tibble(world_bank[1:218,]) 
+tail(world_bank)
+#218 countries
 
 ```
 
