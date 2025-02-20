@@ -1,0 +1,386 @@
+---
+title: "edo_for_manuscript"
+format: html
+---
+
+# Overview
+All exploratory figures and tables presented in the manuscript are coded in this code file.
+
+#### Setup
+
+```{r}
+#load needed packages. make sure they are installed.
+library(here) #for data loading/saving
+library(dplyr)
+library(skimr)
+library(ggplot2)
+library(gt)
+library(gtsummary)
+library(flextable)
+library(gtExtras)
+library(kableExtra)
+```
+
+
+Loading the project data.
+
+```{r}
+#Path to data. Note the use of the here() package and not absolute paths
+data_location <- here::here("data","processed-data","project_data.rds")
+#load data
+project_data <- readRDS(data_location)
+```
+
+
+
+#### Outcome: Difference in HPV vaccination coverage between 2022 and 2019
+
+```{r}
+#histogram of differnce in coverage
+outcome_hist <- ggplot(project_data, aes(x = coverage_diff)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(
+    x = "Difference in HPV vaccination coverage from 2022 to 2019",
+    y = "Count"
+  ) 
+
+outcome_hist_log <- here("results","figures","outcome_hist.png")
+# Save the last plot created as a PNG
+ggsave(outcome_hist_log, width = 8, height = 6, dpi = 300)
+
+
+```
+
+
+#### Creating "Table 1" to show the distribution of each characteristic
+```{r}
+  table1 <- project_data %>% dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>% #Reordering the variables into the order I want displayed in the table
+  dplyr::select(coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, Cumulative_death_rate, HPV_NATIONAL_SCHEDULE, HPV_YEAR_INTRODUCTION, HPV_PRIM_DELIV_STRATEGY, HPV_SEX, doses_rec, WHO_REGION, WB_INCOME, total_pop,  total_pop, pop_density, median_age, pop_growth_rate, fertility_rate, death_rate, life_expect, migration) %>%
+  tbl_summary(
+    type = all_continuous() ~ "continuous2",
+    statistic = list(   #Setting the statistics to calculate
+      all_continuous() ~ c(
+      "{mean} ({sd})",
+      "{median} ({p25}, {p75})"
+    ),
+      all_categorical() ~ "{n} / {N} ({p}%)"),
+    digits = list(   #Setting number of decimal places for each variable
+      coverage_2022 ~ 1,
+      coverage_2019 ~ 1,
+      coverage_diff ~ 1,
+      Cumulative_case_rate ~ 1,
+      Cumulative_death_rate ~ 1,
+      HPV_YEAR_INTRODUCTION ~ function(x) sprintf("%.0f", x),
+      total_pop ~ 1,
+      pop_density ~ 1,
+      median_age ~ 1,
+      pop_growth_rate ~ 1,
+      fertility_rate ~ 1,
+      death_rate ~ 1,
+      life_expect ~ 1,
+      migration ~ 1
+    )) %>%
+  modify_header(
+    stat_0 = "**n/N (%), mean (sd), or median (IQR),** N = {n}") %>%
+  modify_footnote(all_stat_cols() ~ NA) %>%
+  modify_table_styling(
+    columns = label,    # left aligning "label" column
+    align = "left"
+  ) 
+# modify_header(stat0~ "**n/N (%), mean (sd), or median (IQR),**\n N = {n}") 
+ 
+ 
+saveRDS(table1, here("results","tables","table1.rds"))
+
+```
+
+```{r}
+#This is creating the combined table 1 that can be used to pull numbers from 
+# Process the data and create a summary table using dplyr
+word_list <- c("coverage_2022", "coverage_2019", "coverage_diff", "Cumulative_case_rate", 
+    "Cumulative_death_rate", "HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", 
+    "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "doses_rec", "WHO_REGION", "WB_INCOME", 
+    "total_pop", "pop_density", "median_age", "pop_growth_rate", "fertility_rate", 
+    "death_rate", "life_expect", "migration")
+table1_prelim <- project_data %>%
+  dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
+  dplyr::select(
+    coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, 
+    Cumulative_death_rate, HPV_NATIONAL_SCHEDULE, HPV_YEAR_INTRODUCTION, 
+    HPV_PRIM_DELIV_STRATEGY, HPV_SEX, doses_rec, WHO_REGION, WB_INCOME, 
+    total_pop, pop_density, median_age, pop_growth_rate, fertility_rate, 
+    death_rate, life_expect, migration
+  ) %>%
+  tbl_summary(
+    type = all_continuous() ~ "continuous2",
+    statistic = list(
+      all_continuous() ~ c("{mean} ({sd})", "{median} ({p25}, {p75})"),
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = list(
+      coverage_2022 ~ 1,
+      coverage_2019 ~ 1,
+      coverage_diff ~ 1,
+      Cumulative_case_rate ~ 1,
+      Cumulative_death_rate ~ 1,
+      HPV_YEAR_INTRODUCTION ~ function(x) sprintf("%.0f", x),
+      total_pop ~ 1,
+      pop_density ~ 1,
+      median_age ~ 1,
+      pop_growth_rate ~ 1,
+      fertility_rate ~ 1,
+      death_rate ~ 1,
+      life_expect ~ 1,
+      migration ~ 1
+    )
+  ) %>%
+  modify_header(
+    stat_0 = "n/N (%), mean (sd), or median (IQR), N = {n}",
+    label = "Characteristic"
+  ) %>% as_tibble() %>%
+  mutate(`n/N (%), mean (sd), or median (IQR), N = 100` = if_else(is.na(`n/N (%), mean (sd), or median (IQR), N = 100`), " ", `n/N (%), mean (sd), or median (IQR), N = 100`))
+
+saveRDS(table1_prelim, here("results","tables","table1_tib.rds"))
+
+
+
+
+table1 <- table1_prelim %>%
+  gt() %>%
+  tab_style(
+    style = cell_text(weight = "bold"), # Bold text
+    locations = cells_body(
+      columns = Characteristic,
+      rows = grepl(paste(word_list, collapse = "|"), Characteristic, ignore.case = TRUE)  # Apply bold if "mean" or "median" is NOT in the Variable column
+    )
+  )%>%
+    #Making all column headers bld
+    tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything()) 
+  ) 
+
+typeof(table1)
+table1_df <- as_data_frame(table1_prelim) %>%as_flextable()
+saveRDS(table1_df, here("results","tables","table1_df.rds"))
+
+tab_1 <- gtsave(table1, filename = here("results","tables","table1.png"), expand = 10)
+
+saveRDS(table1, here("results","tables","table1.rds"))
+save_as_image(as_flex_table(table1), path = here("results","tables","table1.png"))
+as_flextable(table1_display)
+
+
+
+
+```
+
+Because table rendering to Word appears broken right now, I'll split up the table and save the pieces as pictures, then insert the pictures into the manuscript document.
+```{r}
+#This is creating a "Table 1" for coverage and COVID burden
+# Process the data and create a summary table using dplyr
+coverage_covid <- c("coverage_2022", "coverage_2019", "coverage_diff", "Cumulative_case_rate", 
+    "Cumulative_death_rate")
+table1_cov_covid <- project_data %>%
+  dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
+  dplyr::select(
+    coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, Cumulative_death_rate
+  ) %>%
+  tbl_summary(
+    type = all_continuous() ~ "continuous2",
+    statistic = list(
+      all_continuous() ~ c("{mean} ({sd})", "{median} ({p25}, {p75})"),
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = list(
+      coverage_2022 ~ 1,
+      coverage_2019 ~ 1,
+      coverage_diff ~ 1,
+      Cumulative_case_rate ~ 1,
+      Cumulative_death_rate ~ 1
+    )
+  ) %>%
+  modify_header(
+    stat_0 = "Mean (sd) or median (IQR), N = {n}",
+    label = "Characteristic"
+  ) %>% as_tibble() %>%
+  mutate(`Mean (sd) or median (IQR), N = 100` = if_else(is.na(`Mean (sd) or median (IQR), N = 100`), " ", `Mean (sd) or median (IQR), N = 100`)) %>%
+  gt() %>%
+  tab_style(
+    style = cell_text(weight = "bold"), # Bold text
+    locations = cells_body(
+      columns = Characteristic,
+      rows = grepl(paste(word_list, collapse = "|"), Characteristic, ignore.case = TRUE)  # Apply bold if "mean" or "median" is NOT in the Variable column
+    )
+  )%>%
+    #Making all column headers bld
+    tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything()) 
+  ) %>%
+  tab_options(
+    table.font.size = px(10),        # Set font size
+    data_row.padding = px(1),        # Reduce row padding
+    column_labels.padding = px(2)    # Reduce padding in column headers
+  )
+
+gtsave(table1_cov_covid, filename = here("results","tables","table1_cov_covid.png"), expand = 15)
+
+#########
+
+#This is creating the "Table 1" for vaccination program variables
+# Process the data and create a summary table using dplyr
+vac_program <- c("HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", 
+    "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "doses_rec")
+table1_vac_program <- project_data %>%
+  dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
+  dplyr::select(
+    HPV_NATIONAL_SCHEDULE, HPV_YEAR_INTRODUCTION, 
+    HPV_PRIM_DELIV_STRATEGY, HPV_SEX, doses_rec
+  ) %>%
+  tbl_summary(
+    type = all_continuous() ~ "continuous2",
+    statistic = list(
+      all_continuous() ~ c("{mean} ({sd})", "{median} ({p25}, {p75})"),
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = list(
+      HPV_YEAR_INTRODUCTION ~ function(x) sprintf("%.0f", x)
+    )
+  ) %>%
+  modify_header(
+    stat_0 = "n/N (%), mean (sd), or median (IQR), N = {n}",
+    label = "Characteristic"
+  ) %>% as_tibble() %>%
+  mutate(`n/N (%), mean (sd), or median (IQR), N = 100` = if_else(is.na(`n/N (%), mean (sd), or median (IQR), N = 100`), " ", `n/N (%), mean (sd), or median (IQR), N = 100`)) %>% #Replacing NA with a space so that NA doesn't get printed in the table
+  gt() %>%
+  tab_style(
+    style = cell_text(weight = "bold"), # Bold text
+    locations = cells_body(
+      columns = Characteristic,
+      rows = grepl(paste(word_list, collapse = "|"), Characteristic, ignore.case = TRUE)  # Apply bold if "mean" or "median" is NOT in the Variable column
+    )
+  )%>%
+    #Making all column headers bld
+    tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything()) 
+  ) %>%
+  tab_options(
+    table.font.size = px(10),        # Set font size
+    data_row.padding = px(1),        # Reduce row padding
+    column_labels.padding = px(2)    # Reduce padding in column headers
+  )
+
+gtsave(table1_vac_program, filename = here("results","tables","table1_vac_program.png"), expand = 15)
+
+###########
+#This is creating the combined table 1 that can be used to pull numbers from 
+# Process the data and create a summary table using dplyr
+demo_list <- c("WHO_REGION", "WB_INCOME", 
+    "total_pop", "pop_density", "median_age", "pop_growth_rate", "fertility_rate", 
+    "death_rate", "life_expect", "migration")
+table1_demo <- project_data %>%
+  dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
+  dplyr::select(
+    WHO_REGION, WB_INCOME, 
+    total_pop, pop_density, median_age, pop_growth_rate, fertility_rate, 
+    death_rate, life_expect, migration
+  ) %>%
+  tbl_summary(
+    type = all_continuous() ~ "continuous2",
+    statistic = list(
+      all_continuous() ~ c("{mean} ({sd})", "{median} ({p25}, {p75})"),
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = list(
+      total_pop ~ 1,
+      pop_density ~ 1,
+      median_age ~ 1,
+      pop_growth_rate ~ 1,
+      fertility_rate ~ 1,
+      death_rate ~ 1,
+      life_expect ~ 1,
+      migration ~ 1
+    )
+  ) %>%
+  modify_header(
+    stat_0 = "Mean (sd) or median (IQR), N = {n}",
+    label = "Characteristic"
+  ) %>% as_tibble() %>%
+  mutate(`Mean (sd) or median (IQR), N = 100` = if_else(is.na(`Mean (sd) or median (IQR), N = 100`), " ", `Mean (sd) or median (IQR), N = 100`)) %>%
+  gt() %>%
+  tab_style(
+    style = cell_text(weight = "bold"), # Bold text
+    locations = cells_body(
+      columns = Characteristic,
+      rows = grepl(paste(word_list, collapse = "|"), Characteristic, ignore.case = TRUE)  # Apply bold if "mean" or "median" is NOT in the Variable column
+    )
+  )%>%
+    #Making all column headers bld
+    tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_column_labels(everything()) 
+  ) %>%
+  tab_options(
+    table.font.size = px(8),        # Set font size
+    data_row.padding = px(1),        # Reduce row padding
+    column_labels.padding = px(2)    # Reduce padding in column headers
+  )
+
+gtsave(table1_demo, filename = here("results","tables","table1_demo.png"), expand = 55)
+
+```
+
+
+
+
+#### Creating scatterplot of COVID cases and deaths by difference in coverage
+
+```{r}
+
+scatter_case_covdiff <- project_data %>%
+  ggplot(aes(Cumulative_case_rate,coverage_diff)) + geom_point() + geom_smooth(method = lm) +
+  labs(
+    x = "Number of COVID cases in 2020-2022 per 100,000 persons",
+    y = "Difference in HPV vaccination coverage between 2022 and 2019"
+  ) 
+scatter_case_covdiff_loc <- here("results","figures","scatter_case_covdiff.png")
+# Save the last plot created as a PNG
+ggsave(scatter_case_covdiff_loc, width = 8, height = 6, dpi = 300)
+
+scatter_death_covdiff <- project_data %>%
+  ggplot(aes(Cumulative_death_rate, coverage_diff)) + geom_point() + geom_smooth(method = lm) +
+  labs(
+    x = "Number of COVID deaths in 2020-2022 per 100,000 persons",
+    y = "Difference in HPV vaccination coverage between 2022 and 2019"
+  ) 
+scatter_death_covdiff_loc <- here("results","figures","scatter_death_covdiff.png")
+# Save the last plot created as a PNG
+ggsave(scatter_death_covdiff_loc, width = 8, height = 6, dpi = 300)
+```
+
+
+#### Classfication tree
+
+```{r}
+# Load necessary libraries
+library(rpart)
+library(rpart.plot)
+
+# Fit a regression tree model
+reg_tree <- rpart(coverage_diff ~ total_pop + pop_density + median_age + pop_growth_rate + fertility_rate + death_rate + life_expect + migration + Cumulative_case_rate + Cumulative_death_rate + HPV_YEAR_INTRODUCTION + WHO_REGION + WB_INCOME + HPV_NATIONAL_SCHEDULE + HPV_YEAR_INTRODUCTION + HPV_PRIM_DELIV_STRATEGY + HPV_SEX + doses_rec, 
+                  data = project_data, 
+                  method = "anova")  # anova method for regression trees
+
+
+
+# Visualize the tree
+rpart.plot(reg_tree, type = 2, extra = 101, fallen.leaves = TRUE,
+           main = "Regression Tree for Coverage Difference")
+
+# Print a summary of the tree
+summary(reg_tree)
+
+```
+

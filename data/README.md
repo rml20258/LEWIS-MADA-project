@@ -1,20 +1,19 @@
 # data
 
-The folders inside this folder should contain all data at various stages.
+## Raw data
+The 'raw-data' folder contains all raw data downloaded straight from the data sources.
 
-This data is being loaded/manipulated/changed/saved with code from the `code` folders.
+The raw data files are manipulated using the 'processing-code.qmd' file within the 'processing-code' folder. 
 
-You should place the raw data in the `raw-data` folder and not edit it. Ever!
+## Processed data
+A "clean" data set for each raw data file  is saved in the 'processed-data' subfolder within the 'data' folder.
 
-Ideally, load the raw data into R and do all changes there with code, so everything is automatically reproducible and documented.
+## Overview of processed datasets and raw data files
 
-Sometimes, you need to edit the files in the format you got. For instance, Excel files are sometimes so poorly formatted that it's close to impossible to read them into R, or the persons you got the data from used color to code some information, which of course won't import into R. In those cases, you might have to make modifications in a software other than R. If you need to make edits in whatever format you got the data (e.g. Excel), make a copy and place those copies in a separate folder, AND ONLY EDIT THOSE COPIES. Also, write down somewhere the edits you made. 
-
-Add as many sub-folders as suitable. If you only have a single processing step, one sub-folder for processed data is enough. If you have multiple stages of cleaning and processing, additional sub-folders might be useful. Adjust based on the complexity of your project.
-
-I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. This preserves coding like factors, characters, numeric, etc. If you save as CSV, that information would get lost.
-However, CSV is better for sharing with others since it's plain text. If you do CSV, you might want to write down somewhere what each variable is.
-
-See here for some suggestions on how to store your processed data:
-
-http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata
+Name of clean data set   Description of country-specific information          Name of raw data file
+hpv_coverage              Annual coverage                                     Human Papillomavirus (HPV) vaccination coverage 2025-21-01 11-57 UTC.xlsx
+hpv_program               HPV vaccination program characteristics             who-dashboard-1dosecoverage-1-27-25.csv
+covid                     Weekly COVID burden                                 WHO-COVID-19-global-daily-data.csv 
+u_nations                 Demographic indicators                              WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx
+world_bank                Income data                                         world-bank-country-income.xlsx
+             

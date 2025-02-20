@@ -1,0 +1,317 @@
+---
+title: "Data Cleaning"
+format: html
+editor: visual
+---
+
+
+```{r, echo=FALSE, message=FALSE}
+# load a few R packages
+library(here)
+library(knitr)
+library(tidyverse)
+library(openxlsx)
+library(naniar)
+library(procs)
+```
+
+
+## Data import and cleaning
+
+Each data source must be imported. Data sources can be merged based on country. Each dataset will be restricted to countries with vaccination coverage estimates in 2019 and 2022. 
+
+#### HPV coverage and vaccination program data
+There are two data files to be imported for the HPV vaccination data, one file contains yearly coverage estimates and the other contains information about the HPV vaccination program.
+
+##### HPV vaccination coverage
+A total of 196 countries are included in the data set. Coverage estimates are available from 2010 to 2023, but most countries are missing on some years of data. Data manipulation will be needed to restrict to the years of interest and convert data form long to wide.
+
+```{r}
+#Importing yearly HPV vaccination coverage
+hpv_coverage_raw <- read.xlsx(here("data","raw-data","Human Papillomavirus (HPV) vaccination coverage 2025-21-01 11-57 UTC.xlsx"), sheet = "Sheet1", colNames = TRUE)
+
+#There are missing data, data will need to be converted from long to wide format to get a better sense of complete data
+gg_miss_var(hpv_coverage_raw)
+#Gives total number of countries in the dataset
+table(hpv_coverage_raw$YEAR)
+
+#Taking a look at the structure of the dataset
+glimpse(hpv_coverage_raw)
+
+table(hpv_coverage_raw$GROUP)
+#Restricting data to years 2019 and 2022
+hpv_coverage <- hpv_coverage_raw %>%
+  filter(GROUP == "COUNTRIES") %>% #Deleting global estimates of country
+  dplyr::select(CODE, NAME, YEAR, COVERAGE) %>% #Restricting to variables that will be used 
+  filter(YEAR == 2022 | YEAR == 2019) %>% #Restricting to rows with year equal to 2019 or 2022
+    #converting data from long to wide
+    pivot_wider(
+    names_from = YEAR, 
+    values_from = COVERAGE,
+    names_prefix = "coverage_"
+  ) %>%
+  rename(
+    coverage_2019 = coverage_2019,
+    coverage_2022 = coverage_2022
+  ) %>%
+  filter(!is.na(coverage_2019) & !is.na(coverage_2022))
+
+
+
+summary(hpv_coverage)
+head(hpv_coverage)
+
+#Saving data to the processed data folder
+saveRDS(hpv_coverage, file = here("data","processed-data","hpv_coverage.rds"))
+
+```
+
+##### HPV vaccination program characteristics
+A total of 196 countries are included in the data set. About one third of countries are missing year of introduction, and a few are missing country income. Other characteristics (e.g., delivery strategy) appear complete.
+```{r}
+#Importing HPV vaccination program characteristics
+hpv_program_raw <- read.csv(here("data","raw-data","who-dashboard-1dosecoverage-1-27-25.csv"), header = TRUE)
+
+#There are missing data, year of introduction is missing for about a third of countries, more checks will be done later among the countries with coverage estimtes from 2019 and 2022 because this missingness is likely due to countries that havne't introduced HPV vaccination yet
+gg_miss_var(hpv_program_raw)
+#Gives total number of countries in the dataset
+nrow(hpv_program_raw)
+
+#Data cleaning
+hpv_program <- hpv_program_raw %>%
+  dplyr::select(-HPV1_COVERAGELASTYEAR,-HPVC_COVERAGELASTYEAR, -HPV_AGEADMINISTERED) %>%
+  rename(CODE = ISO_3_CODE) %>% #renaming the ID variable, a unique country specific code, so this can be used to merge across datasets
+  mutate(doses_rec = if_else(substr(HPV_INT_DOSES,1,1) == 1, 1,       if_else(substr(HPV_INT_DOSES,1,1) == 2, 2, NA)))
+
+head(hpv_program)
+summary(hpv_program)
+
+#Saving data to the processed data folder
+saveRDS(hpv_program, file = here("data","processed-data","hpv_program.rds"))
+
+
+```
+
+
+I am incrementally building the combined data set. As a first step, I am combining the HPV vaccination coverage estimates with the HPV vaccination program information and performing some basic data checks. Other combinations will be performed in the _Combining all datasets_ section below.
+```{r}
+
+combo <- hpv_coverage %>% left_join(hpv_program, by = join_by(CODE))
+head(combo)
+#Checking to see if any of the countries didn't match correctly by comparing the country names in each dataset
+non_matches <- combo %>%
+  filter(NAME != COUNTRYNAME)
+print(non_matches)
+#One country, Côte d'Ivoire, came up in this check, however, this only came up because the name of the country has some formatting issues in one of the datasets, this isn't a merging problem
+
+#Data are 
+proc_freq(combo, c("WHO_REGION", "WB_INCOME", "HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "HPV_INT_DOSES"), options = "missing")
+
+#Data were very complete, at most variables had 1 country with missing data
+#Reviewing the countries with missing data on any of the variables
+combo_missing <- combo %>%
+  filter(HPV_INT_DOSES=="" | WB_INCOME =="." )
+print(combo_missing)
+#Only 2 countries total were missing data on at least one variable, Bahamas and Palau, these countries will be retained since classification tree analysis is less affected by missing data
+
+#Getting list of countries in the combo dataset to use for subsetting other datasets
+countries <- combo %>% dplyr::select(CODE)
+
+```
+
+
+#### United Nations data 
+There are 238 countries with yearly data from 1950 to 2023. Data appear mostly complete (ISO2 Alpha-code is missing for some rows but this is missing for all World and Region specific rows since this is a code to indicate country). Data will be restricted to the two years of interest during the next part of the project.
+```{r}
+
+u_n_raw <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates")
+header_row <- 10
+column_names_un <- as.character(unlist(u_n_raw[header_row, ]))
+
+# Read the data again, skipping the rows before the header
+u_nations_full <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates", startRow = 18, colNames = FALSE)
+colnames(u_nations_full) <- column_names_un
+
+#Getting number of countries
+u_nations_count <- table(u_nations_full$`ISO3 Alpha-code`)
+dim(u_nations_count)
+#238 countries
+
+#Getting number of years
+table(u_nations_full$Year)
+#Year ranges from 1950 to 2023
+
+#There are missing data, year of introduction is missing for about a third of countries
+gg_miss_var(u_nations_full)
+
+#Current dataset includes data at higher levels than just country, will check this again once data are restricted to countries of interest 
+summary(u_nations_full)
+tail(u_nations_full)
+table(u_nations_full$`Type`)
+
+#Note: this data includes both a 3 character and 2 character country-specific code, this is important because each other dataset includes one or the other, the United Nations data allows all data sets to be merged together
+u_nations_full <- u_nations_full %>%
+  rename(CODE = `ISO3 Alpha-code`) %>%
+  rename(CODE2 = `ISO2 Alpha-code`)
+  
+#Restricting to countries of interest
+u_nations_countries <- countries %>% left_join(u_nations_full, by = join_by(CODE))
+summary(u_nations_countries)
+head(u_nations_countries, n = 20)
+#Only country level data is left
+table(u_nations_countries$`Type`)
+
+#Restricting to data columns of interest and renaming to easier to use names
+u_nations <- u_nations_countries %>%
+  filter(Year == 2019) %>%
+  dplyr::select(CODE, CODE2,`Region, subregion, country or area *`, `Total Population, as of 1 July (thousands)`, `Population Density, as of 1 July (persons per square km)`, `Median Age, as of 1 July (years)`, `Population Growth Rate (percentage)`, `Total Fertility Rate (live births per woman)`, `Crude Death Rate (deaths per 1,000 population)`, `Life Expectancy at Birth, both sexes (years)`, `Net Migration Rate (per 1,000 population)`) %>%
+  mutate(total_pop = as.numeric(`Total Population, as of 1 July (thousands)`), 
+         pop_density = as.numeric(`Population Density, as of 1 July (persons per square km)`), 
+         median_age = as.numeric(`Median Age, as of 1 July (years)`), 
+         pop_growth_rate = as.numeric(`Population Growth Rate (percentage)`), 
+         fertility_rate = as.numeric(`Total Fertility Rate (live births per woman)`), 
+         death_rate = as.numeric(`Crude Death Rate (deaths per 1,000 population)`), 
+         life_expect = as.numeric(`Life Expectancy at Birth, both sexes (years)`), 
+         migration = as.numeric(`Net Migration Rate (per 1,000 population)`),
+         country_un = `Region, subregion, country or area *`) %>%
+  dplyr::select(-`Total Population, as of 1 July (thousands)`, -`Population Density, as of 1 July (persons per square km)`, -`Median Age, as of 1 July (years)`, -`Population Growth Rate (percentage)`, -`Total Fertility Rate (live births per woman)`, -`Crude Death Rate (deaths per 1,000 population)`, -`Life Expectancy at Birth, both sexes (years)`, -`Net Migration Rate (per 1,000 population)`,-`Region, subregion, country or area *`)
+
+#Summary of United Nations data
+summary(u_nations)
+head(u_nations)
+
+#Virtually no missing data
+gg_miss_var(u_nations)
+
+countries_2 <- u_nations %>% dplyr::select(CODE, CODE2)
+typeof(countries_2)
+#Saving data to the processed data folder
+saveRDS(u_nations, file = here("data","processed-data","u_nations.rds"))
+
+
+#Getting the total population so I can convert COVID burden from number of cases/deaths to number of cases/deaths per 100,000 persons
+u_nations_total_pop <- u_nations_countries %>%
+  filter(Year == 2020 | Year == 2021 | Year == 2022) %>%
+  dplyr::select(CODE, CODE2, Year, `Total Population, as of 1 July (thousands)`) %>%
+  mutate(total_pop = as.numeric(`Total Population, as of 1 July (thousands)`)) %>% 
+  dplyr::select(-`Total Population, as of 1 July (thousands)`) %>%
+  pivot_wider(
+    names_from = Year, 
+    values_from = total_pop,
+    names_prefix = "total_pop_"
+  ) %>%
+  rename(
+    total_pop_2020 = total_pop_2020,
+    total_pop_2021 = total_pop_2021,
+    total_pop_2022 = total_pop_2022
+  ) %>%
+  mutate(total_pop_20_22 = (total_pop_2020 + total_pop_2021 + total_pop_2022)/100)
+
+
+#Summary of United Nations data
+summary(u_nations_total_pop)
+head(u_nations_total_pop)
+
+```
+
+
+
+#### COVID19 data 
+This data source includes weekly COVD case count data on 239 countries. The data set includes 440640 rows, but about half have missing data on new case counts. Completeness of data will have to be reviewed once the data are restricted to countries with vaccination coverage estimates in the years of interest.
+```{r}
+#Importing HPV vaccination program characteristics
+covid_raw <- read.csv(here("data","raw-data","WHO-COVID-19-global-daily-data.csv"), header = TRUE)
+
+#There are missing data, year of introduction is missing for about a third of countries
+gg_miss_var(covid_raw)
+#Gives total number of countries in the dataset
+nrow(covid_raw)
+#Getting the number of countires - 239
+num_countries <- table(covid_raw$Country_code)
+dim(num_countries)
+
+summary(covid_raw)
+head(covid_raw)
+
+#Have to rename the 2 character country code for merging
+covid_prelim <- covid_raw %>%
+  rename(CODE2 = Country_code)
+
+#Restricting to countries of interest
+covid <- countries_2 %>% left_join(covid_prelim, by = join_by(CODE2))  %>% left_join(u_nations_total_pop, by=join_by(CODE2)) %>%
+  mutate(year_covid = substr(Date_reported, 1, 4)) %>% #Extracting the year from the date of data submission 
+  dplyr::select(-CODE.x) %>%
+  rename(CODE = CODE.y) %>%
+  filter(year_covid == 2020 | year_covid == 2021 | year_covid == 2022 ) %>%
+  arrange(CODE2, year_covid) %>%
+  group_by(CODE2, year_covid) %>%
+  slice_tail(n = 1) %>% #Taking last row in a given year per country
+  filter(year_covid == 2022 ) %>% #restricted to 2022
+  dplyr::select(CODE, CODE2, year_covid, Date_reported, Country, Cumulative_cases, Cumulative_deaths, total_pop_20_22) %>% #dropping unnecessary variables 
+  mutate(Cumulative_case_rate = Cumulative_cases / total_pop_20_22,
+         Cumulative_death_rate = Cumulative_deaths / total_pop_20_22) %>%
+  dplyr::select(-Cumulative_cases, -Cumulative_deaths)
+
+
+head(covid)
+#Confirming all dates of submission were on 12-31-22
+table(covid$Date_reported)
+
+
+#Saving data to the processed data folder
+saveRDS(covid, file = here("data","processed-data","covid.rds"))
+
+# Confirmed that cumulative cases was the sum of the new_cases on all days prior
+# covid_year_total <- covid %>%
+#   group_by(CODE2, year_covid) %>%
+#   summarise(total_cases = sum(New_cases, na.rm = TRUE), .groups = "drop")
+# 
+#   covid_combo <- covid %>% left_join(covid_year_total, by = join_by(CODE2, year_covid))
+#   
+#   summary(covid_combo)
+# head(covid_combo)
+# 
+# last_entry <- covid_combo %>%
+#   group_by(CODE2, year_covid) %>%
+#   slice_tail(n = 1) %>%
+#   filter(year_covid == 2020 | year_covid == 2021 | year_covid == 2022 ) %>%
+#   dplyr::select(CODE2, year_covid, total_cases, Country, New_cases, Cumulative_cases)
+# print(last_entry)
+```
+
+## Combining all datasets
+Above, HPV vaccination coverage and vaccine program characteristic data were combined. Here, I'm combining that data with the United Nations demographic characteristics and COVID burden. 
+
+```{r}
+#Joining United Nations, COVID, and HPV coverage and vaccination program data
+project_data_pre <- combo %>% left_join(u_nations, by = join_by(CODE)) %>% left_join(covid, by = join_by(CODE)) 
+
+#Data checks
+head(project_data_pre)
+
+#confirming the rows merged correctly across datasets by comparing the country name in each dataset
+name_mismatch <- project_data_pre %>%
+  filter(NAME != COUNTRYNAME | NAME != country_un | NAME != Country | COUNTRYNAME != country_un | COUNTRYNAME != Country | Country != country_un)  
+print(name_mismatch)
+#4 countries did not have perfectly matching names across the datasets, but all differences were due to formatting (eg., abbreviations or punctuation), confirming the merge was successful
+
+#Dropping all extra versions of country
+project_data <- project_data_pre %>%
+  dplyr::select(-COUNTRYNAME, -NAME, -country_un, -CODE2.x, -Date_reported) %>%
+  rename(CODE2 = CODE2.y) %>%
+  mutate(coverage_diff = coverage_2022 - coverage_2019) #Creating outcome variable of difference in vaccination coverage between 2022 and 2019
+
+#Looking at missingness for each included variable
+gg_miss_var(project_data)
+print(project_data %>% filter(is.na(WB_INCOME)))
+#One country (Cook Islands) is missing on country income, all other data are complete
+
+#Histogram of the outcome (difference in HPV vaccination coverage between 2022 and 2019)
+hist(project_data$coverage_diff)
+
+
+#Saving data to the processed data folder
+saveRDS(project_data, file = here("data","processed-data","project_data.rds"))
+```
+
+

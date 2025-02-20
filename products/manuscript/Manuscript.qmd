@@ -11,10 +11,6 @@ csl: ../../assets/american-journal-of-epidemiology.csl
 ---
 
 
-
-This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
-
-
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
 library(here)
@@ -22,12 +18,16 @@ library(knitr)
 library(tidyverse)
 library(openxlsx)
 library(naniar)
+library(gtsummary)
+library(flextable)
+library(gtExtras)
+library(officer)
 ```
 
 
 **Authors**  
 
-* Rayleen Lewis$^{1}$ (ORCID: 0000-0000-1234-5678) 
+* Rayleen Lewis$^{1}$  
 
 
 **Author affiliations**  
@@ -46,7 +46,7 @@ author's own and don't reflect their employer or University.
 
 
 # Summary/Abstract
-_Write a summary of your project._
+
 
 
 {{< pagebreak >}}
@@ -55,147 +55,77 @@ _Write a summary of your project._
 # Introduction 
 
 ## General Background Information
-_Provide enough background on your topic that others can understand the why and how of your analysis_ 
-
-## Description of data and data source
-Information on the dat sources can be found in the Data Acquisition and Data Importing and Cleaning sections below. Briefly, all datasets will be reduced to include only countries with vaccination coverage estimates in both 2019 and 2022. Average coverage will be compared in 2022 to 2019. Multivariable linear regression modeling the difference in coverage between the two years as the outcome will be conducting using measures of COVID-19 burden, HPV vaccination program characteristics, country income information, and country-level demographics. Measure(s) of COVID-19 burden will be considered the explanatory variable of interest. Other characteristics will be considered for adjustment. 
-
-## Questions/Hypotheses to be addressed
-The objective of this work is to determine if HPV vaccination coverage changed between 2019 and 2022 among countries offering HPV vaccination as of 2019, and if so, are these changes correlated with COVID-19 burden in 2020-2021. I hypothesize that HPV vaccination coverage was lower in 2022 than 2019 among countries with high burden of COVID-19 in 2020-2021 and comparable in countries with a low COVID-19 burden.
 
 
+### Description of data and data source
+The difference in HPV vaccination coverage between 2022 and 2019 will be modeled using multivariable regression techniques, including multivariable linear regression _other information on new modeling techniques will be added_. Cumulative number of COVID cases per 100,000 persons as of December 31, 2022 was the explanatory variable. HPV vaccination program characteristics, country income information, and country-level demographics will be considered for adjustment. HPV vaccination coverage, HPV vaccine program characteristics, and cumulative number of COVID cases were extracted from publicly available data from the World Health Organization. Country sociodemographic information was publicly available from the United Nations. All information was collected at the country level, and data were restricted to countries that had HPV vaccination coverage estimates for both 2019 and 2022.
 
+
+### Questions/Hypotheses to be addressed
+The objective of this work is to determine if changes in HPV vaccination coverage were correlated with COVID burden in 2020-2022. I hypothesize that HPV vaccination coverage was lower in 2022 than 2019 among countries with high burden of COVID-19 in 2020-2022 and comparable in countries with a low COVID-19 burden.
+
+_This is to be determined based on methods learned later in the course, but this is an initial thought on how to implement one of the methods covered in a later module._
+An additional objective of this work is to develop a classification tree analysis to assist with classifying countries by their change in HPV vaccination coverage using other country-level HPV vaccine program and sociodemographic characteristics. The purpose of this classification tree is to identify key sociodemographic indicators that may be used by policy makers for pandemic preparedness efforts to prevent reductions in HPV coverage if an epidemic or pandemic affects a country.
 
 
 {{< pagebreak >}}
 
 
 # Methods 
-Briefly, all datasets will be reduced to include only countries with vaccination coverage estimates in both 2019 and 2022. Average coverage will be compared in 2022 to 2019. Multivariable linear regression modeling the difference in coverage between the two years as the outcome will be conducting using measures of COVID-19 burden, HPV vaccination program characteristics, country income information, and country-level demographics. Measure(s) of COVID-19 burden will be considered the explanatory variable of interest. Other characteristics will be considered for adjustment. 
-
-
-## Schematic of workflow
-
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
-We store those figures in the `assets` folder.
-
-```{r}
-#| label: fig-schematic
-#| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
-#| echo: FALSE
-knitr::include_graphics(here("assets","antigen-recognition.png"))
-```
-
-
-
 
 ## Data aquisition
 Data on HPV vaccination coverage and vaccination program details are available at the country level through the World Health Organization's (WHO) [HPV Dashboard](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/human-papillomavirus-vaccines-(HPV)/hpv-clearing-house/hpv-dashboard). Briefly, coverage data reflect administrative and official HPV vaccination coverage reported annually through the WHO/UNICEF Joint Reporting Form on Immunization. HPV Dashboard include country income level (low, lower middle, upper middle, high), whether there was a national HPV vaccine schedule, year of vaccine introduction, primary delivery strategy (school-based, facility based, varies by region, mixed), number of doses in routine schedule, whether the program is gender neutral (target males and females), WHO region, and year-specific coverage from 2010 to 2023. 
 
 Country-specific weekly COVID-19 case and death counts are available from starting in 1/4/2020 through the WHO [COVID-19 dashboard](https://data.who.int/dashboards/covid19/data?n=o). In August 2023, WHO stopped requiring weekly reporting, although some countries continued to voluntarily report COVID-19 data.
 
-Additional country-level covariates were collected from other publicly available data sources. Information on country income level by year is available through the [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups#:~:text=For%20the%20current%202025%20fiscal,those%20with%20a%20GNI%20per). Country-level demographics including life expectancy of females at birth and population size were available from the [United Nations](https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=CSV%20format)
+Country-level demographics including life expectancy of females at birth and population size were available from the [United Nations](https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=CSV%20format)
 
 All data sources are publicly available for download and were downloaded on January 26-27, 2025. 
 
 ## Data import and cleaning
-_Write code that reads in the file and cleans it so it's ready for analysis. Since this will be fairly long code for most datasets, it might be a good idea to have it in one or several R scripts. If that is the case, explain here briefly what kind of cleaning/processing you do, and provide more details and well documented code somewhere (e.g. as supplement in a paper). All materials, including files that contain code, should be commented well so everyone can follow along._
-Each data source must be imported. Data sources can be merged based on country. Each dataset will be restricted to countries with vaccination coverage estimates in 2019 and 2022. 
+Each data source imported and merged based on country; all datasets had variables for a country code and name. Individual datasets were restricted to the variables of interest as follows: 
 
-#### HPV coverage and vaccination program data
-There are two data files to be imported for the HPV vaccination data, one file contains yearly coverage estimates and the other contains information about the HPV vaccination program.
-
-##### HPV vaccination coverage
-A total of 196 countries are included in the data set. Coverage estimates are available from 2010 to 2023, but most countries are missing on some years of data. Data manipulation will be needed to restrict to the years of interest and convert data form long to wide.
-
-```{r}
-#Importing yearly HPV vaccination coverage
-hpv_coverage_raw <- read.xlsx(here("data","raw-data","Human Papillomavirus (HPV) vaccination coverage 2025-21-01 11-57 UTC.xlsx"), sheet = "Sheet1", colNames = TRUE)
-
-#There are missing data, data will need to be converted from long to wide format to get a better sense of complete data
-gg_miss_var(hpv_coverage_raw)
-#Gives total number of countries in the dataset
-table(hpv_coverage_raw$YEAR)
-
-```
-
-##### HPV vaccination program characteristics
-A total of 196 countries are included in the data set. About one third of countries are missing year of introduction, and a few are missing country income. Other characteristics (e.g., delivery strategy) appear complete.
-```{r}
-#Importing HPV vaccination program characteristics
-hpv_program_raw <- read.csv(here("data","raw-data","who-dashboard-1dosecoverage-1-27-25.csv"), header = TRUE)
-
-#There are missing data, year of introduction is missing for about a third of countries
-gg_miss_var(hpv_program_raw)
-#Gives total number of countries in the dataset
-nrow(hpv_program_raw)
-```
-
-#### COVID19 data 
-This data source includes weekly COVD case count data on 239 countries. The data set includes 440640 rows, but about half have missing data on new case counts. Completeness of data will have to be reviewed once the data are restricted to countries with vaccination coverage estimates in the years of interest.
-```{r}
-#Importing HPV vaccination program characteristics
-covid_raw <- read.csv(here("data","raw-data","WHO-COVID-19-global-daily-data.csv"), header = TRUE)
-
-#There are missing data, year of introduction is missing for about a third of countries
-gg_miss_var(covid_raw)
-#Gives total number of countries in the dataset
-nrow(covid_raw)
-#Getting the number of countires - 239
-countries <- table(covid_raw$Country_code)
-dim(countries)
-```
-
-#### United Nations data 
-There are 238 countries with yearly data from 1950 to 2023. Data appear mostly complete (ISO2 Alpha-code is missing for some rows but this is missing for all World and Region specific rows since this is a code to indicate country). Data will be restricted to the two years of interest during the next part of the project.
-```{r}
-
-u_n_raw <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates")
-header_row <- 10
-column_names_un <- as.character(unlist(u_n_raw[header_row, ]))
-
-# Read the data again, skipping the rows before the header
-u_n <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates", startRow = 18, colNames = FALSE)
-colnames(u_n) <- column_names_un
-
-#Getting number of countries
-un_countries <- table(u_n$`ISO3 Alpha-code`)
-dim(un_countries)
-#238 countries
-
-#Getting number of years
-table(u_n$Year)
-#Year ranges from 1950 to 2023
-
-#There are missing data, year of introduction is missing for about a third of countries
-gg_miss_var(u_n)
-```
-
-
-#### World Bank data 
-There are 218 countries with yearly data from 1987 to 2023. Some data are missing, but this is mostly complete. Data will be restricted to the two years of interest during the next part of the project.
-```{r, echo=FALSE}
-
-world_bank_raw <- read.xlsx(here("data","raw-data","world-bank-country-income.xlsx"), sheet = "Country Analytical History")
-header_row <- 4
-column_names <- as.character(unlist(world_bank_raw[header_row, ]))
-
-# Read the data again, skipping the rows before the header
-world_bank <- read.xlsx(here("data","raw-data","world-bank-country-income.xlsx"), sheet = "Country Analytical History", startRow = 12, colNames = FALSE)
-colnames(world_bank) <- column_names
-colnames(world_bank)[c(1, 2)] <- c("country_code", "country")
-
-world_bank <- as_tibble(world_bank[1:218,]) 
-tail(world_bank)
-#218 countries
-
-```
-
+* HPV vaccination coverage
+    + HPV vaccination coverage in 2022
+    + HPV vaccination coverage in 2019
+* HPV vaccination program characteristics
+    + WHO region
+    + World Bank country income level
+    + Indicator for whether HPV vaccine is offered through a national recommendation
+    + Year of HPV vaccine program introduction
+    + Primary HPV vaccine delivery strategy (e.g., school-based)
+    + Indicator for gender neutral vaccination (i.e., female-only vaccination or females and males)
+    + Recommended number of doses (1 or 2)
+* United Nations country demographic data
+    + Total Population, as of 1 July (thousands)
+    + Population Density, as of 1 July (persons per square km)
+    + Median Age, as of 1 July (years)
+    + Population Growth Rate (percentage)
+    + Total Fertility Rate (live births per woman)
+    + Crude Death Rate (deaths per 1,000 population)
+    + Life Expectancy at Birth, both sexes (years)
+    + Net Migration Rate (per 1,000 population)
+* COVID burden through Dec. 31, 2022
+    + Cumulative number of COVID cases per 100,000 persons
+    + Cumulative number of COVID deaths per 100,000 persons
+    
+    
+The final project dataset was restricted to countries with vaccination coverage estimates in both 2019 and 2022 (N = 100). The outcome variable was coded as HPV vaccination coverage of at least one dose among females in 2022 minus coverage in 2019. Of the 100 included countries, 2 countries were missing some vaccine program characteristic information and 1 country was missing income level. All other countries had complete data for all variables. 
 
 
 
 ## Statistical analysis
-_Explain anything related to your statistical analyses._
+#### Exploratory/Descriptive analyses
+The mean (standard deviation (sd)) and median (interquartile range (IQR)) were calculated for each continuous country characteristic (e.g., number of cumulative COVID cases). For categorical variables, the distribution (n, %) of each level was calculated. A histogram of the difference in coverage was graphed. Bivariate associations between each characteristic and the change in HPV vaccination coverage between 2022 and 2019 were visually assessed using scatterplots for continuous variables and violin plots for categorical variables. 
+
+#### Multivariable modeling 
+Multivariable linear regression was performed to identify primary predictors of change in HPV vaccination coverage. Model selection was performed using backwards elimination; variables with the largest _p_-value were eliminated one at a time until all variables in the model had a _p_-value < 0.1. 
+_Information on additionally modeling techniques will be added later_
+
+
+#### Classification tree analysis
+
+All data management and analysis was conducted using R (Version 2024.12.0+467). Classification tree analyses were conducted using the XXXX package. 
 
 
 {{< pagebreak >}}
@@ -205,82 +135,105 @@ _Explain anything related to your statistical analyses._
 
 ## Exploratory/Descriptive analysis
 
-_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
+```{r, include = F, echo = F}
+table1_display=readRDS(here("results","tables","table1_tib.rds"))
+table1_tib <- as_tibble(table1_display) %>% rename(character = `Characteristic`, stat = `n/N (%), mean (sd), or median (IQR), N = 100`)
+```
 
 
-@tbl-summarytable shows a summary of the data.
+##### Difference in HPV vaccination coverage between 2022 and 2019
 
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below. I generally recommend the `here` package.
+The difference in HPV vaccination coverage between 2022 and 2019 appears normally distributed centered around 0 (i.e., no change in coverage).(@fig-Figure1) The mean (sd) difference in coverage was `r table1_tib %>%  filter(row_number() == which(character == "coverage_diff") + 1) %>% pull(stat)`; the median (IQR) was `r table1_tib %>%  filter(row_number() == which(character == "coverage_diff") + 2) %>% pull(stat)`.(@tbl-Table1_coverage_covid)
+```{r}
+#| label: fig-Figure1
+#| fig-cap: "Histogram of difference in HPV vaccination coverage between 2019 and 2022"
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","outcome_hist.png"))
+```
+
+{{< pagebreak >}}
 
 ```{r}
-#| label: tbl-summarytable
-#| tbl-cap: "Data summary table."
+#| label: tbl-Table1_coverage_covid
+#| tbl-cap: "HPV vaccination coverage and COVID burden among countries with HPV vaccination programs in 2019 and 2022"
 #| echo: FALSE
-resulttable=readRDS("../../results/tables/summarytable.rds")
-knitr::kable(resulttable)
+knitr::include_graphics(here("results","tables","table1_cov_covid.png"))
+#knitr::knit_print(as_flex_table(table1_display))
+#table1_df=readRDS(here("results","tables","table1_df.rds"))
+#as_flextable(table1_df)
+#table1_df=readRDS(here("results","tables","table1_df.rds"))
+#knitr::knit_print(table1_df)
+#doc <- read_docx(here("products","manuscript","manuscript.docx"))
+
+# Add the gt table to the Word document
+#doc <- doc %>%
+#  body_add_gt(gt_table = table1, align = "center")
+
+# Save the Word document
+#print(doc, target = "word_table.docx")
+
+#knitr::kable(
+#  as_kable(table1_display))
+
+#table1_tbl_sum=readRDS(here("results","tables","table1_tbl_sum.rds"))
+
+
+#table1_tbl=readRDS(here("results","tables","try.rds"))
+#table1_tbl
+```
+
+
+
+##### COVID burden
+
+Between January 1, 2020, and December 31, 2022, the mean (sd) number of cases per 100,000 persons was `r table1_tib %>%  filter(row_number() == which(character == "Cumulative_case_rate") + 1) %>% pull(stat)`. The median was lower at `r table1_tib %>% filter(row_number() == which(character == "Cumulative_case_rate") + 2) %>% pull(stat)`.(@tbl-Table1_coverage_covid) The mean 3-year COVID death rate was `r table1_tib %>% filter(row_number() == which(character == "Cumulative_death_rate") + 1) %>% pull(stat)` deaths per 100,000 persons; the median was similar at `r table1_tib %>% filter(row_number() == which(character == "Cumulative_case_rate") + 2) %>% pull(stat)`.
+
+
+##### Vaccination program characteristics
+The median year of vaccine introduction was `r table1_tib %>% filter(row_number() == which(character == "HPV_YEAR_INTRODUCTION") + 2) %>% pull(stat)`.(@tbl-table1_vac_program) School-based delivery programs were the most common (`r table1_tib %>% filter(row_number() == which(character == "School-based") + 2) %>% pull(stat)`). A majority of programs had a gender nuetral vaccination recommendation and a 2-dose routine recommendation (rather than a 1-dose recommendation).
+
+{{< pagebreak >}}
+
+```{r}
+#| label: tbl-table1_vac_program
+#| tbl-cap: "HPV vaccination program characteristics among countries with HPV vaccination programs in 2019 and 2022"
+#| echo: FALSE
+knitr::include_graphics(here("results","tables","table1_vac_program.png"))
+
+```
+
+
+##### Sociodempgraphic characteristics
+Sociodemographic metrics were presented in @tbl-table1_demo. The most common WHO region was the Euro region, and the most common country income level was high-income. Mean life expectancy was `r table1_tib %>%  filter(row_number() == which(character == "life_expect") + 1) %>% pull(stat)`. 
+
+{{< pagebreak >}}
+```{r}
+#| label: tbl-table1_demo
+#| tbl-cap: "Sociodemographic characteristics among countries with HPV vaccination programs in 2019 and 2022"
+#| echo: FALSE
+knitr::include_graphics(here("results","tables","table1_demo.png"))
 ```
 
 
 
 ## Basic statistical analysis
 
-_To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
-
-
-@fig-result shows a scatterplot figure produced by one of the R scripts.
-
-```{r}
-#| label: fig-result
-#| fig-cap: "Height and weight stratified by gender."
-#| echo: FALSE
-knitr::include_graphics(here("results","figures","height-weight-stratified.png"))
-```
-
 
 ## Full analysis
-
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
-
-Example @tbl-resulttable2 shows a summary of a linear model fit.
-
-```{r}
-#| label: tbl-resulttable2
-#| tbl-cap: "Linear model fit table."
-#| echo: FALSE
-resulttable2 = readRDS(here("results","tables","resulttable2.rds"))
-knitr::kable(resulttable2)
-```
-
-
-{{< pagebreak >}}
 
 
 # Discussion
 
 ## Summary and Interpretation
-_Summarize what you did, what you found and what it means._
+
 
 ## Strengths and Limitations
-_Discuss what you perceive as strengths and limitations of your analysis._
 
 ## Conclusions
-_What are the main take-home messages?_
-
-_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
-
-This paper [@leek2015] discusses types of analyses. 
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like.
 
 
 {{< pagebreak >}}
 
 # References
 
-
-To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above and have the right bibtex key. Then you can include like this:
-
-Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
 

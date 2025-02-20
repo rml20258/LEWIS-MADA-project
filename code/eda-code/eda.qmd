@@ -1,28 +1,10 @@
 ---
-title: "An example exploratory analysis script"
+title: "Exploratory analysis script"
 date: "2024-02-07"
 output: html_document
 ---
 
   
-  
-This Quarto file loads the cleaned data and does some exploring.
-
-I'm only showing it the way where the code is included in the file. 
-As described in the `processing_code` materials, I currently prefer the approach of having R code in a separate file and pulling it in.
-
-But I already had this written and haven't yet re-done it that way. Feel free to redo and send a pull request on GitHub :)
-
-Again, it is largely a matter of preference and what makes the most sense to decide if one wants to have code inside Quarto files, or as separate R files.
-And sometimes, an R script with enough comments is good enough and one doesn't need a Quarto file.
-
-Also note that while here I split cleaning and exploring, this is iterative. You saw that as part of the processing, we already had to explore the data somewhat to understand how to clean it. In general, as you explore, you'll find things that need cleaning. As you clean, you can explore more. Therefore, at times it might make more sense to combine the cleaning and exploring code parts into a single R or Quarto file. Or split things in any other logical way.
-
-As part of the exploratory analysis, you should produce plots or tables or other summary quantities for the most interesting/important quantities in your data. Depending on the total number of variables in your dataset, explore all or some of the others. Figures produced here might be histograms or density plots, correlation plots, etc. Tables might summarize your data.
-
-Start by exploring one variable at a time. Then continue by creating plots or tables of the outcome(s) of interest and the predictor/exposure/input variables you are most interested in. If your dataset is small, you can do that for all variables. 
-
-Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can be simple 2x2 tables or larger ones.
 
 # Setup
 
@@ -32,82 +14,149 @@ library(here) #for data loading/saving
 library(dplyr)
 library(skimr)
 library(ggplot2)
+library(gt)
+library(gtsummary)
 ```
 
 
-Load the data.
+Loading the project data.
 
 ```{r}
 #Path to data. Note the use of the here() package and not absolute paths
-data_location <- here::here("data","processed-data","processeddata.rds")
+data_location <- here::here("data","processed-data","project_data.rds")
 #load data
-mydata <- readRDS(data_location)
+project_data <- readRDS(data_location)
 ```
-
-
-
-
 
 # Data exploration through tables
 
-Showing a bit of code to produce and save a summary table.
-
-
+The code below calculates the distribution of each categorical variable and basic statistics for continuous variables. 
 ```{r}
-summary_df = skimr::skim(mydata)
-print(summary_df)
-# save to file
-summarytable_file = here("results", "tables", "summarytable.rds")
-saveRDS(summary_df, file = summarytable_file)
+str(project_data)
+
+#Getting distributions for categorical variables
+freq_table <- proc_freq(project_data, tables = c("WHO_REGION","WB_INCOME","HPV_NATIONAL_SCHEDULE","HPV_YEAR_INTRODUCTION","HPV_PRIM_DELIV_STRATEGY","HPV_SEX","doses_rec"), options = "missing", output = out)
+freqtable_file = here("results", "tables", "freq_table_results.rds")
+saveRDS(freq_table, file = freqtable_file)
+
+
+project_data %>% dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>% tbl_summary()
+
+#Getting statistics for continuous variables
+means_table <- proc_means(project_data, var = c("total_pop","pop_density","median_age","pop_growth_rate","fertility_rate","death_rate","life_expect","migration","Cumulative_case_rate","Cumulative_death_rate","HPV_YEAR_INTRODUCTION","coverage_diff"), stats = c("N","NMISS","MEAN","STD","MEDIAN","Q1","Q3","MIN","MAX"), options = v(maxdec = 2), output = out)
+meanstable_file = here("results", "tables", "means_table_results.rds")
+saveRDS(means_table, file = meanstable_file)
+
 ```
 
-We are saving the results to the `results` folder. Depending on how many tables/figures you have, it might make sense to have separate folders for each. And/or you could have separate folders for exploratory tables/figures and for final tables/figures. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.
-
-
-# Data exploration through figures
-
-Histogram plots for the continuous outcomes. 
-
-Height first.
-
+Next, I'll look at the continuous variables using histograms;
 ```{r}
-p1 <- mydata %>% ggplot(aes(x=Height)) + geom_histogram() 
-plot(p1)
-figure_file = here("results", "figures","height-distribution.png")
-ggsave(filename = figure_file, plot=p1) 
-```
+project_data %>%
+  ggplot(aes(total_pop)) + geom_histogram()
 
-Now weights.
+project_data %>%
+  ggplot(aes(pop_density)) + geom_histogram()
 
-```{r}
-p2 <- mydata %>% ggplot(aes(x=Weight)) + geom_histogram() 
-plot(p2)
-figure_file = here("results", "figures","weight-distribution.png")
-ggsave(filename = figure_file, plot=p2) 
-```
+project_data %>%
+  ggplot(aes(median_age)) + geom_histogram()
 
-Now height as function of weight.
+project_data %>%
+  ggplot(aes(pop_growth_rate)) + geom_histogram()
 
-```{r}
-p3 <- mydata %>% ggplot(aes(x=Height, y=Weight)) + geom_point() + geom_smooth(method='lm')
-plot(p3)
-figure_file = here("results", "figures", "height-weight.png")
-ggsave(filename = figure_file, plot=p3) 
-```
+project_data %>%
+  ggplot(aes(fertility_rate)) + geom_histogram()
 
-Once more height as function of weight, stratified by gender. Note that there is so little data, it's a bit silly. But we'll plot it anyway.
+project_data %>%
+  ggplot(aes(death_rate)) + geom_histogram()
 
-```{r}
-p4 <- mydata %>% ggplot(aes(x=Height, y=Weight, color = Gender)) + geom_point() + geom_smooth(method='lm')
-plot(p4)
-figure_file = here("results", "figures", "height-weight-stratified.png")
-ggsave(filename = figure_file, plot=p4) 
+project_data %>%
+  ggplot(aes(life_expect)) + geom_histogram()
+
+project_data %>%
+  ggplot(aes(migration)) + geom_histogram()
+
+project_data %>%
+  ggplot(aes(Cumulative_case_rate)) + geom_histogram()
+
+project_data %>%
+  ggplot(aes(Cumulative_death_rate)) + geom_histogram()
+
+project_data %>%
+  ggplot(aes(HPV_YEAR_INTRODUCTION)) + geom_histogram()
+
 ```
 
 
 
-# Notes
+Next step is to look at the outcome (difference in coverage between 2022 and 2019).
+```{r}
+#histogram of differnce in coverage
+project_data %>%
+  ggplot(aes(coverage_diff)) + geom_histogram()
 
-For your own explorations, tables and figures can be "quick and dirty". As long as you can see what's going on, there is no need to polish them. That's in contrast to figures you'll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.
+```
+Final exploratory is to look at bivariate associations between each of the predictors and the outcome through figures.
+```{r}
+#Violin plots of the outcome by each categorical variable
+project_data %>%
+  ggplot(aes(coverage_diff, WHO_REGION)) + geom_violin()
 
+project_data %>%
+  ggplot(aes(coverage_diff, WB_INCOME)) + geom_violin()
+
+project_data %>%
+  ggplot(aes(coverage_diff, HPV_NATIONAL_SCHEDULE)) + geom_violin()
+
+project_data %>%
+  ggplot(aes(coverage_diff, HPV_PRIM_DELIV_STRATEGY)) + geom_violin()
+
+project_data %>%
+  ggplot(aes(coverage_diff, HPV_SEX)) + geom_violin()
+
+project_data %>%
+  ggplot(aes(coverage_diff, as.factor(doses_rec))) + geom_violin()
+
+
+
+#Scatterplots with the outcome and each continuous variable
+project_data %>%
+  ggplot(aes(coverage_diff, total_pop)) + geom_point() + geom_smooth()
+#Taking a closer look at the data that is bunched up less than <100,000
+project_data %>%
+  filter(total_pop < 100000) %>%
+  ggplot(aes(coverage_diff, total_pop)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, pop_density)) + geom_point() + geom_smooth()
+project_data %>% filter(pop_density<1000) %>%
+  ggplot(aes(coverage_diff, pop_density)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, median_age)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, fertility_rate)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, death_rate)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, life_expect)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, migration)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, Cumulative_case_rate)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, Cumulative_death_rate)) + geom_point() + geom_smooth()
+
+project_data %>%
+  ggplot(aes(coverage_diff, HPV_YEAR_INTRODUCTION)) + geom_point() + geom_smooth()
+
+```
+There's pretty substantial variability in the outcome. There don't appear to be any strong relationships between the covariates and the outcome, and linear relationships are likely not great fits. For most associations, a second or third order term may be more appropriate for logistic regression modeling.
+
+Based on the visual inspections and apriori knowledge, the following characteristics were considered for multivariable modeling: WHO region, country income level, year of HPV vaccination, primary delivery strategy, gender neutral vacciantion, number of recommended doses, median age, fertility rate, death rate, life expectancy, migration, cumulative case rate, cumulative death rate. 
 

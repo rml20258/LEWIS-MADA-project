@@ -1,14 +1,16 @@
 #raw-data
 
-This folder should contain all raw data. As needed add sub-folders.
+This folder should contain all raw data. 
 
-Currently, as an example, it contains a simple made-up data-set in an Excel file.
+Contents and description of files
 
-The dataset contains the variables `Height`, `Weight` and `Gender` of a few imaginary individuals.
+Description of country-specific information         Name of raw data file                               
+Annual HPV vaccination coverage                     Human Papillomavirus (HPV) vaccination coverage 2025-21-01 11-57 UTC.xlsx   
+HPV vaccination program characteristics             who-dashboard-1dosecoverage-1-27-25.csv
+Daily COVID burden                                  WHO-COVID-19-global-daily-data.csv 
+Demographic indicators                              WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx
 
-The dataset purposefully contains some faulty entries that need to be cleaned.
-
-Generally, any dataset should contain some meta-data explaining what each variable in the dataset is. (This is often called a **Codebook**.) For this simple example, the codebook is given as a second sheet in the Excel file.
-
-This raw data-set should generally not be edited by hand. It should instead be loaded and processed/cleaned using code.
-
+Data sources:
+HPV vaccination coverage and program characteristics: World Health Organization's HPV Dashboard (https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases/human-papillomavirus-vaccines-(HPV)/hpv-clearing-house/hpv-dashboard)
+COVID burden: World Health Organization's COVID Dashboard (https://data.who.int/dashboards/covid19/data?n=o)
+Country-level demographics: United Nations (https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=CSV%20format)
