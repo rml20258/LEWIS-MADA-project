@@ -138,3 +138,11 @@ Examples of reproducible research projects can for instance be found in [@mckay2
 
 
 Additional country-level covariates were collected from other publicly available data sources. Information on country income level by year is available through the [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups#:~:text=For%20the%20current%202025%20fiscal,those%20with%20a%20GNI%20per). Country-level demographics including life expectancy of females at birth and population size were available from the [United Nations](https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=CSV%20format)
+
+
+# Package management
+
+It is recommended to use [renv](https://rstudio.github.io/renv/index.html) to manage R packages and increase chances of future reproducibility. This is required if you are using the template as part of a research project for our group. Otherwise, you can decide to implement `renv` or not. This can happen at any stage, though earlier in the project is generally better.
+
+If you plan to use `renv`, start by reading [the introduction to `renv` article](https://rstudio.github.io/renv/articles/renv.html) so you know how to use it.
+

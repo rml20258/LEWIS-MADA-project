@@ -16,6 +16,7 @@ library(skimr)
 library(ggplot2)
 library(gt)
 library(gtsummary)
+library(procs)
 ```
 
 
@@ -46,6 +47,12 @@ project_data %>% dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>% tbl_sum
 means_table <- proc_means(project_data, var = c("total_pop","pop_density","median_age","pop_growth_rate","fertility_rate","death_rate","life_expect","migration","Cumulative_case_rate","Cumulative_death_rate","HPV_YEAR_INTRODUCTION","coverage_diff"), stats = c("N","NMISS","MEAN","STD","MEDIAN","Q1","Q3","MIN","MAX"), options = v(maxdec = 2), output = out)
 meanstable_file = here("results", "tables", "means_table_results.rds")
 saveRDS(means_table, file = meanstable_file)
+
+### Checks to determine if there are any countries with extremely low coverage estimates that seem implausible
+proc_means(project_data, var = c("coverage_2019","coverage_2022"), stats = c("N","NMISS","MEAN","STD","MEDIAN","Q1","Q3","MIN","MAX"), options = v(maxdec = 2))
+
+project_data %>% filter(coverage_2019 < 20 | coverage_2022 < 20) %>% dplyr::select(Country, coverage_diff, coverage_2019, coverage_2022)
+#Several countries have coverage estimates that seem to be data quality issues (e.g., Botswana, Gambia, Cook Islands), but there's no way to actually know if coverage is actually that low or if coverage estimates are extremely off - I'll leave data as is for now. 
 
 ```
 

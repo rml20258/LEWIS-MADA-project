@@ -1,3 +1,6 @@
 # analysis-code
 
-This folder contains  an R script with a bit of a statistical analysis. This is only implemented as an R script, no Quarto version. 
+The 'statistical-analysis.R' file contains code needed to perform all analyses included in the 
+"Basic statistical analysis" section of the Results in the Manuscript. All results are stored
+as images in order to knit the Word document and can be refered to in the Manuscript.qmd
+file without running statistical-analysis.R. 

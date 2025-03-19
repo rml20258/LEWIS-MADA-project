@@ -115,15 +115,14 @@ The final project dataset was restricted to countries with vaccination coverage 
 
 
 ## Statistical analysis
-#### Exploratory/Descriptive analyses
+### Exploratory/Descriptive analyses
 The mean (standard deviation (sd)) and median (interquartile range (IQR)) were calculated for each continuous country characteristic (e.g., number of cumulative COVID cases). For categorical variables, the distribution (n, %) of each level was calculated. A histogram of the difference in coverage was graphed. Bivariate associations between each characteristic and the change in HPV vaccination coverage between 2022 and 2019 were visually assessed using scatterplots for continuous variables and violin plots for categorical variables. 
 
-#### Multivariable modeling 
-Multivariable linear regression was performed to identify primary predictors of change in HPV vaccination coverage. Model selection was performed using backwards elimination; variables with the largest _p_-value were eliminated one at a time until all variables in the model had a _p_-value < 0.1. 
-_Information on additionally modeling techniques will be added later_
+### Multivariable modeling 
+Multivariable linear regression was performed to assess the association between difference in HPV vaccination coverage and cumulative number of COVID cases, a measure of COVID burden. An unadjusted model and fully adjusted model (adjusted for all country level demographic and vaccination program characteristics) were performed. Additionally, models adjusted for each country level characteristic were estimated. For each model, the effect of COVID case count on difference in HPV vaccination coverage between 2019-2022 (beta , standard error, p-value from t-test with a null hypothesis of beta = 0) and model performance metrics (R-squared, AIC, BIC) were extracted and compared. Selection of a final model was based on subject matter expertise, which model had the highest R-squared, and which model had the lowest AIC and/or BIC. Model parameters were presented for the final selected model.
 
 
-#### Classification tree analysis
+### Classification tree analysis
 
 All data management and analysis was conducted using R (Version 2024.12.0+467). Classification tree analyses were conducted using the XXXX package. 
 
@@ -141,7 +140,7 @@ table1_tib <- as_tibble(table1_display) %>% rename(character = `Characteristic`,
 ```
 
 
-##### Difference in HPV vaccination coverage between 2022 and 2019
+### Difference in HPV vaccination coverage between 2022 and 2019
 
 The difference in HPV vaccination coverage between 2022 and 2019 appears normally distributed centered around 0 (i.e., no change in coverage).(@fig-Figure1) The mean (sd) difference in coverage was `r table1_tib %>%  filter(row_number() == which(character == "coverage_diff") + 1) %>% pull(stat)`; the median (IQR) was `r table1_tib %>%  filter(row_number() == which(character == "coverage_diff") + 2) %>% pull(stat)`.(@tbl-Table1_coverage_covid)
 ```{r}
@@ -184,13 +183,13 @@ knitr::include_graphics(here("results","tables","table1_cov_covid.png"))
 
 
 
-##### COVID burden
+### COVID burden
 
 Between January 1, 2020, and December 31, 2022, the mean (sd) number of cases per 100,000 persons was `r table1_tib %>%  filter(row_number() == which(character == "Cumulative_case_rate") + 1) %>% pull(stat)`. The median was lower at `r table1_tib %>% filter(row_number() == which(character == "Cumulative_case_rate") + 2) %>% pull(stat)`.(@tbl-Table1_coverage_covid) The mean 3-year COVID death rate was `r table1_tib %>% filter(row_number() == which(character == "Cumulative_death_rate") + 1) %>% pull(stat)` deaths per 100,000 persons; the median was similar at `r table1_tib %>% filter(row_number() == which(character == "Cumulative_case_rate") + 2) %>% pull(stat)`.
 
 
-##### Vaccination program characteristics
-The median year of vaccine introduction was `r table1_tib %>% filter(row_number() == which(character == "HPV_YEAR_INTRODUCTION") + 2) %>% pull(stat)`.(@tbl-table1_vac_program) School-based delivery programs were the most common (`r table1_tib %>% filter(row_number() == which(character == "School-based") + 2) %>% pull(stat)`). A majority of programs had a gender nuetral vaccination recommendation and a 2-dose routine recommendation (rather than a 1-dose recommendation).
+### Vaccination program characteristics
+The median year of vaccine introduction was `r table1_tib %>% filter(row_number() == which(character == "HPV_YEAR_INTRODUCTION") + 2) %>% pull(stat)`.(@tbl-table1_vac_program) School-based delivery programs were the most common (`r table1_tib %>% filter(row_number() == which(character == "School-based")) %>% pull(stat)`). A majority of programs had a gender nuetral vaccination recommendation and a 2-dose routine recommendation (rather than a 1-dose recommendation).
 
 {{< pagebreak >}}
 
@@ -203,7 +202,7 @@ knitr::include_graphics(here("results","tables","table1_vac_program.png"))
 ```
 
 
-##### Sociodempgraphic characteristics
+### Sociodempgraphic characteristics
 Sociodemographic metrics were presented in @tbl-table1_demo. The most common WHO region was the Euro region, and the most common country income level was high-income. Mean life expectancy was `r table1_tib %>%  filter(row_number() == which(character == "life_expect") + 1) %>% pull(stat)`. 
 
 {{< pagebreak >}}
@@ -217,7 +216,64 @@ knitr::include_graphics(here("results","tables","table1_demo.png"))
 
 
 ## Basic statistical analysis
+### Bivariate associations between the difference in HPV vaccination coverage between 2019 and 2022 and COVID burden 
+There appears to be linear association between cumulative COVID cases and the difference in HPV vaccination coverage between 2019 and 2022 (@fig-Figure2). Of note, there is a lot of variation in the coverage difference among countries with lower numbers of cumulative COVID cases.
 
+```{r}
+#| label: fig-Figure2
+#| fig-cap: "Scatterplot of difference in HPV vaccination coverage between 2019 and 2022 and cumulative COVID cases per 100,000"
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","scatter_case_covdiff.png"))
+
+```
+
+A similar association was seen when assessing cumulative COVID deaths (@fig-Figure3). Because these variables are both measures of COVID burden and they exhibit similar patterns, the remainder of the analysis is focused on COVID case burden.
+
+```{r}
+#| label: fig-Figure3
+#| fig-cap: "Scatterplot of difference in HPV vaccination coverage between 2019 and 2022 and cumulative COVID deaths per 100,000"
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","scatter_death_covdiff.png"))
+```
+
+### Bivariate associations between the each country demographic and vaccination program characteristic and the difference in HPV vaccination coverage between 2019 and 2022  
+The distribution of the difference in vaccination coverage by each country level demographic variable can be seen in @fig-Figure4. For each WHO region, the distribution of change in coverage centers around 0, with the SEAR and EUR showing a more narrow distribution. Similarly, the distribution of coverage difference was centered around 0 regardless of country income level, and high-income countries had the tightest distribution. The patterns in the continuous variables are less straightforward, particularly as there appear to be potential outliers. Based on the figure below, total population may have a linear, positive association with coverage difference, while life expectancy and median age show a negative quadratic association and fertility rate may show a negative quadratic association.
+
+```{r}
+#| label: fig-Figure4
+#| fig-cap: "Distribution of difference in HPV vaccination coverage between 2019 and 2022 by each country demographic variable"
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","demo_fig.png"))
+
+```
+
+There were some differences in the distribution of coverage difference by vaccine program characteristics (@fig-Figure5). Countries with a facility-based delivery strategy, gender neutral vaccination program, and 2-dose recommendation had distributions of coverage difference with a smaller portion of countries in the distribution region indicating a decrease in coverage (i.e., most of the data was centered around zero or was greater than 0). There was not a strong association with difference in coverage and year of association. 
+
+```{r}
+#| label: fig-Figure5
+#| fig-cap: "Associations between vaccine program characteristics and difference in HPV vaccination coverage between 2019 and 2022 and cumulative COVID deaths per 100,000"
+#| echo: FALSE
+knitr::include_graphics(here("results","figures","bivar_vac.png"))
+```
+
+## Preliminary modeling
+As a preliminary modeling step, beta estimates, standard errors, and p-values for the effect of cumulative COVID cases on the difference in coverage are presented in @tbl-modelcomp. Each performance metric has been shaded using a sliding color scale; a light color indicates worse performance, darker color indicates better performance, and the "best" performing model is indicated using bold text. The fully adjusted model (adjusted for all country level demographic and vaccination program characteristics) had the highest R^2^ and lowest AIC. The model adjusted for country income level had the lowest BIC. Therefore, preliminary modeling will focus on the fully adjusted model. However, none of these models are a particularly great fitting model, and given that the beta is switching directions (positive/negative) and very close to zero, there does not appear to be a strong association between COVID burden and difference in coverage regardless of adjustment. 
+```{r}
+#| label: tbl-modelcomp
+#| tbl-cap: "Preliminary model comparison for models assessing the effect of cumulative COVID cases on the difference in HPV vaccination coverage"
+#| echo: FALSE
+knitr::include_graphics(here("results","tables","table_model_adj_format.png"))
+
+```
+
+Estimates from the fully adjusted model are shown in @tbl-fully_adj. There was not a significant association between cumulative number of COVID cases and the difference in HPV vaccination coverage between 2019-2022. After adjusting for all other characteristics, the difference in coverage was significantly higher and positive (indicating increase in coverage between 2019 and 2022) for all WHO regions, except the Eastern Mediterranean Region, compared to the African Region. 
+```{r}
+#| label: tbl-fully_adj
+#| tbl-cap: "Model parameters for fully adjusted model assessing the effect of cumulative COVID cases on the difference in HPV vaccination coverage"
+#| echo: FALSE
+knitr::include_graphics(here("results","tables","lmtablefull_gt.png"))
+
+```
 
 ## Full analysis
 

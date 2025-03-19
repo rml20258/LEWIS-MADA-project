@@ -299,7 +299,10 @@ print(name_mismatch)
 project_data <- project_data_pre %>%
   dplyr::select(-COUNTRYNAME, -NAME, -country_un, -CODE2.x, -Date_reported) %>%
   rename(CODE2 = CODE2.y) %>%
-  mutate(coverage_diff = coverage_2022 - coverage_2019) #Creating outcome variable of difference in vaccination coverage between 2022 and 2019
+  mutate(coverage_diff = coverage_2022 - coverage_2019) #Creating outcome variable of difference in vaccination coverage between 2022 and 2019 
+
+project_data <- project_data %>%
+  mutate(delivery_strat = if_else(HPV_PRIM_DELIV_STRATEGY == "Varies by region/province", "Mixed", HPV_PRIM_DELIV_STRATEGY))
 
 #Looking at missingness for each included variable
 gg_miss_var(project_data)
