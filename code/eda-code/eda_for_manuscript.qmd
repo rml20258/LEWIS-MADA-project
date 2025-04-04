@@ -36,7 +36,7 @@ project_data <- readRDS(data_location)
 #### Outcome: Difference in HPV vaccination coverage between 2022 and 2019
 
 ```{r}
-#histogram of differnce in coverage
+#histogram of difference in coverage
 outcome_hist <- ggplot(project_data, aes(x = coverage_diff)) +
   geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
   labs(

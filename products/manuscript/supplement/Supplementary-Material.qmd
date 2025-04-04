@@ -1,12 +1,10 @@
 ---
-title: "Supplement to Example Manuscript Template for a Data Analysis Project"
+title: "Supplement to Effect of COVID-19 burden on changes in HPV vaccination coverage among females between 2019 and 2022"
 format:
-  pdf:
+  docx:
     toc: false
     number-sections: true
     highlight-style: github
-bibliography: ../../assets/dataanalysis-references.bib
-csl: ../../assets/american-journal-of-epidemiology.csl
 ---
 
 
@@ -18,86 +16,69 @@ library(knitr)
 
 
 
+# Supplemental Information
 
-This shows some materials that could go into a supplementary file. Often you want/need references here too. You can use the same reference bib file for this and the main text (as done here) or have separate bib files.
+## Table of contents 
 
-For illustrative purposes, I'm doing the supplement as pdf. For this to work, you need a (La)TeX system installed. It's easy. Just follow [these steps](https://quarto.org/docs/output-formats/pdf-basics.html).
-
-Of course you would choose the format based on needs.
-
-I'm also using a different style for the references here. (vancouver vs apa in the main manuscript). Usually one would have the formatting of the references the same in those two documents, but I want to illustrate how easy it is to switch reference formatting styles, you just need to get the right CSL file and specify it in the YAML header. We could also have a seperate reference bibtext (`.bib`) file, but here we are using the same.
-
-
-{{< pagebreak >}}
-
-
-
-
-# Overview
-
-A quick overview of what readers can find in the supplement.
-
+-   Code and file information
+-   Country characteristic details
 
 # Code and file information
 
 Explain here what each code/file is and does, and in which order (if any) users need to run thing to reproduce everything.
 Essentially, give a full set of instructions to re-generate everything.
 
+# Country characteristic details
+The following list provides additional details for each country-level characteristics, including data source - World Health Organization (WHO) or United Nations (UN)
+
+-   HPV vaccination coverage (WHO)
+    -   HPV vaccination coverage in 2022
+    -   HPV vaccination coverage in 2019
+-   HPV vaccination program characteristics (WHO)
+    -   WHO region
+    -   World Bank country income level
+    -   Indicator for whether HPV vaccine is offered through a national recommendation
+    -   Year of HPV vaccine program introduction
+    -   Primary HPV vaccine delivery strategy (e.g., school-based)
+    -   Indicator for gender neutral vaccination (i.e., female-only vaccination or females and males)
+    -   Recommended number of doses (1 or 2)
+-   United Nations country demographic data (UN)
+    -   Total Population, as of 1 July (thousands)
+    -   Population Density, as of 1 July (persons per square km)
+    -   Median Age, as of 1 July (years)
+    -   Population Growth Rate (percentage)
+    -   Total Fertility Rate (live births per woman)
+    -   Crude Death Rate (deaths per 1,000 population)
+    -   Life Expectancy at Birth, both sexes (years)
+    -   Net Migration Rate (per 1,000 population)
+-   COVID burden through Dec. 31, 2022 (WHO)
+    -   Cumulative number of COVID cases per 100,000 persons
+    -   Cumulative number of COVID deaths per 100,000 persons
+
+
+
 
 {{< pagebreak >}}
 
 
-# Additional Method Details
+# Additional Analyses
 
-Often, the main manuscript only allows for an overview description of the methods. Use the supplement to describe all your methods, models and approaches in a lot of detail. Reference specific parts of your code as needed.
-
-{{< pagebreak >}}
-
-
-# Additional results
-
-Show additional results here. Those can be some useful exploratory/descriptive figures or tables, or results from additional analyses that didn't make it into the main text.
-
-
-## Example additional result
-
-
-@tbl-resulttable1 shows an additional table summarizing a model fit.
 
 ```{r}
-#| label: tbl-resulttable1
-#| tbl-cap: "Another fit table."
+#| label: fig-Figure
+#| fig-cap: "Scatterplot of difference in HPV vaccination coverage between 2019 and 2022 and cumulative COVID deaths per 100,000"
 #| echo: FALSE
-resulttable1 = readRDS(here("results","tables","resulttable1.rds"))
-knitr::kable(resulttable1)
+knitr::include_graphics(here("results","figures","scatter_death_covdiff.png"))
 ```
 
 
-
-@fig-result2 shows a scatterplot figure produced by one of the R scripts.
-
-
 ```{r}
-#| label: fig-result2
-#| fig-cap: "Height and weight."
+#| label: tbl-medianage_lm_model
+#| tbl-cap: "Parameter estimates for median age adjusted linear regression"
 #| echo: FALSE
-knitr::include_graphics(here("results","figures","height-weight.png"))
+lmtableage_betas = readRDS(here("results", "tables", "lmtableage.rds"))
+knitr::kable(lmtableage_betas)
 ```
-
-
-{{< pagebreak >}}
-
-
-# Discussion
-
-Any additional discussion regarding the supplementary material/findings.
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
-
-{{< pagebreak >}}
-
-
-# References
 
 
 
