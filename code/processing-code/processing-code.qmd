@@ -4,7 +4,6 @@ format: html
 editor: visual
 ---
 
-
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages
 library(here)
@@ -15,15 +14,16 @@ library(naniar)
 library(procs)
 ```
 
-
 ## Data import and cleaning
 
-Each data source must be imported. Data sources can be merged based on country. Each dataset will be restricted to countries with vaccination coverage estimates in 2019 and 2022. 
+Each data source must be imported. Data sources can be merged based on country. Each dataset will be restricted to countries with vaccination coverage estimates in 2019 and 2022.
 
 #### HPV coverage and vaccination program data
+
 There are two data files to be imported for the HPV vaccination data, one file contains yearly coverage estimates and the other contains information about the HPV vaccination program.
 
 ##### HPV vaccination coverage
+
 A total of 196 countries are included in the data set. Coverage estimates are available from 2010 to 2023, but most countries are missing on some years of data. Data manipulation will be needed to restrict to the years of interest and convert data form long to wide.
 
 ```{r}
@@ -67,7 +67,9 @@ saveRDS(hpv_coverage, file = here("data","processed-data","hpv_coverage.rds"))
 ```
 
 ##### HPV vaccination program characteristics
+
 A total of 196 countries are included in the data set. About one third of countries are missing year of introduction, and a few are missing country income. Other characteristics (e.g., delivery strategy) appear complete.
+
 ```{r}
 #Importing HPV vaccination program characteristics
 hpv_program_raw <- read.csv(here("data","raw-data","who-dashboard-1dosecoverage-1-27-25.csv"), header = TRUE)
@@ -92,8 +94,8 @@ saveRDS(hpv_program, file = here("data","processed-data","hpv_program.rds"))
 
 ```
 
+I am incrementally building the combined data set. As a first step, I am combining the HPV vaccination coverage estimates with the HPV vaccination program information and performing some basic data checks. Other combinations will be performed in the *Combining all datasets* section below.
 
-I am incrementally building the combined data set. As a first step, I am combining the HPV vaccination coverage estimates with the HPV vaccination program information and performing some basic data checks. Other combinations will be performed in the _Combining all datasets_ section below.
 ```{r}
 
 combo <- hpv_coverage %>% left_join(hpv_program, by = join_by(CODE))
@@ -119,9 +121,10 @@ countries <- combo %>% dplyr::select(CODE)
 
 ```
 
+#### United Nations data
 
-#### United Nations data 
 There are 238 countries with yearly data from 1950 to 2023. Data appear mostly complete (ISO2 Alpha-code is missing for some rows but this is missing for all World and Region specific rows since this is a code to indicate country). Data will be restricted to the two years of interest during the next part of the project.
+
 ```{r}
 
 u_n_raw <- read.xlsx(here("data","raw-data","WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"), sheet = "Estimates")
@@ -214,10 +217,10 @@ head(u_nations_total_pop)
 
 ```
 
+#### COVID19 data
 
-
-#### COVID19 data 
 This data source includes weekly COVD case count data on 239 countries. The data set includes 440640 rows, but about half have missing data on new case counts. Completeness of data will have to be reviewed once the data are restricted to countries with vaccination coverage estimates in the years of interest.
+
 ```{r}
 #Importing HPV vaccination program characteristics
 covid_raw <- read.csv(here("data","raw-data","WHO-COVID-19-global-daily-data.csv"), header = TRUE)
@@ -280,7 +283,8 @@ saveRDS(covid, file = here("data","processed-data","covid.rds"))
 ```
 
 ## Combining all datasets
-Above, HPV vaccination coverage and vaccine program characteristic data were combined. Here, I'm combining that data with the United Nations demographic characteristics and COVID burden. 
+
+Above, HPV vaccination coverage and vaccine program characteristic data were combined. Here, I'm combining that data with the United Nations demographic characteristics and COVID burden.
 
 ```{r}
 #Joining United Nations, COVID, and HPV coverage and vaccination program data
@@ -316,5 +320,3 @@ hist(project_data$coverage_diff)
 #Saving data to the processed data folder
 saveRDS(project_data, file = here("data","processed-data","project_data.rds"))
 ```
-
-

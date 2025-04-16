@@ -41,85 +41,15 @@ data_location <- here::here("data","processed-data","project_data.rds")
 #load data. 
 project_data <- readRDS(data_location)
 
-
+#Restricting project_data to complete rows 
 cc_project_data <- project_data %>%
   drop_na()
+
 ######################################
 #Data fitting/statistical analysis
 ######################################
 
 
-
-
-
-
-#Violin plots of the outcome by each categorical variable
-demo1 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, WHO_REGION)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "WHO region")
-
-demo2 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, WB_INCOME)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Country income level")
-
-demo3 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, total_pop)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Total population (in thousands)")
-
-demo4 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, pop_density)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Population density (persons per square km)")
-
-#Building 4 panel figure of country demographics
-bivar_demo_1 <- (demo1 | demo2) / (demo3 | demo4)
-bivar_demo_1_loc <- here("results","figures","bivar_demo_1.png")
-# Save the plot created as a PNG
-ggsave(bivar_demo_1_loc, plot = bivar_demo_1, width = 8, height = 6, dpi = 300)
-
-
-demo5 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, median_age)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Median age of population")
-
-demo6 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, fertility_rate)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Fertility rate (live births per woman)")
-
-demo7 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, death_rate)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Death rate (deaths per 1,000 population)")
-
-demo8 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, life_expect)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Life expectancy (in years)")
-
-demo9 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, migration)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Migration rate (per 1000 population)")
-
-#Building 5 panel figure of the rest of the demographics
-bivar_demo_2 <- (demo5 | demo6 | demo7) / (demo8 | demo9)
-bivar_demo_2_loc <- here("results","figures","bivar_demo_2.png")
-# Save the plot created as a PNG
-ggsave(bivar_demo_2_loc, plot = bivar_demo_2, width = 8, height = 6, dpi = 300)
-
-#Building 9 panel demographic figure
-demo_fig_loc <- here("results","figures","demo_fig.png")
-demo_fig <- (demo1 | demo2 | demo3) / (demo4 | demo5 | demo6) / (demo7 | demo8 | demo9) 
-ggsave(demo_fig_loc, plot = demo_fig, width = 8, height = 10, dpi = 300)
-
-#Vaccination variables
-vac1 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, HPV_NATIONAL_SCHEDULE)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "National vaccine schedule")
-
-vac2 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, HPV_PRIM_DELIV_STRATEGY)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Primary vaccination delivery strategy")
-
-vac3 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, HPV_SEX)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Genders vaccinated")
-
-vac4 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, as.factor(doses_rec))) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Number of recommended doses")
-
-vac5 <- cc_project_data %>%
-  ggplot(aes(coverage_diff, HPV_YEAR_INTRODUCTION)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Year of vaccine introduction")
-
-#Building 5 panel figure of vaccination program variables
-bivar_vac <- (vac1 | vac2 | vac3) / (vac4 | vac5)
-bivar_vac_loc <- here("results","figures","bivar_vac.png")
-# Save the plot created as a PNG
-ggsave(bivar_vac_loc, plot = bivar_vac, width = 8, height = 6, dpi = 300)
 
 ############################
 #### First model fit
@@ -386,7 +316,13 @@ table_model_adj_format <- table_model_adj %>%
       cell_text(weight = "bold")
     ),
     locations = cells_body(columns = r.squared, rows = r.squared == max(table_model_adj$r.squared))
-  ) 
+  )  %>%
+  cols_label(
+    beta = "Beta for COVID case burden",  # Rename columns
+    std.error = "Standard error", 
+    p.value = "p-value",
+    r.squared = "R-squared"
+  )
 
 #Saving formatted table for all model comparisons
 gtsave(table_model_adj_format, filename = here("results","tables","table_model_adj_format.png"))
@@ -516,7 +452,7 @@ lmtablefull_gt <- lmtablefull %>%
   gt() %>%
   fmt_number(
     columns = everything(),  # Apply to all numeric columns
-    decimals = 6             # Adjust decimal places as needed
+    n_sigfig = 3             # Adjust decimal places as needed
   ) %>%
   tab_style(
     style = cell_text(weight = "bold"),  # Make headers bold
@@ -533,6 +469,30 @@ lmtablefull_gt <- lmtablefull %>%
   tab_spanner(
     label = md("**Linear regression model**"),  # denotes columns from the linear regression model
     columns = c("estimate", "std.error", "statistic", "p.value")  # Columns to span
+  ) %>% 
+  text_case_match(
+    "Cumulative_case_rate" ~ "Cumulative COVID cases",
+    "HPV_YEAR_INTRODUCTION" ~ "Year of HPV vaccine introduction",
+    "delivery_stratMixed" ~ "Mixed delivery strategy",
+    "delivery_stratSchool-based" ~ "School-based delivery strategy",
+    "HPV_SEXFemale" ~ "Female only vaccination",
+    "doses_rec" ~ "Number of recommended doses",
+    "WHO_REGIONAMR" ~ "Region of the Americas",
+    "WHO_REGIONEMR" ~ "Eastern Mediterranean region",
+    "WHO_REGIONEUR" ~ "European region",
+    "WHO_REGIONSEAR" ~ "South-East Asian region",
+    "WHO_REGIONWPR" ~ "Western Pacific region",
+    "WB_INCOMELow income" ~ "Low income level",
+    "WB_INCOMELower middle income" ~ "Lower middle income level",
+    "WB_INCOMEUpper middle income" ~ "Upper middle income level",
+    "total_pop" ~ "Total population",
+    "pop_density" ~ "Population density",
+    "median_age" ~ "Median age",
+    "pop_growth_rate" ~ "Population growth rate",
+    "fertility_rate" ~ "Total fertility rate",
+    "death_rate" ~ "Crude death rate",
+    "life_expect" ~ "Life expectancy at birth",
+    "migration" ~ "Net migration rate"
   )
 
 #Saving formatted table for all model comparisons
@@ -549,13 +509,21 @@ saveRDS(lmtablefull_gt_ref, file = lmtablefull_gt_ref_loc)
 
 
 #### Classification tree
+# Renaming some variables so that the tree has better formatting
+cc_project_data_tree <- cc_project_data %>%
+  rename(`Median age` = median_age,
+         `Cumulative COVID cases` = Cumulative_case_rate,
+         `Poplation density` = pop_density,
+         `Fertility rate` = fertility_rate,
+         `Migration rate` = migration,
+         `Number of recommended doses` = doses_rec)
 
 # Fit a regression tree model
-reg_tree <- rpart(coverage_diff ~ total_pop + pop_density + median_age + pop_growth_rate + 
-                    fertility_rate + death_rate + life_expect + migration + Cumulative_case_rate + 
+reg_tree <- rpart(coverage_diff ~ total_pop + `Poplation density` + `Median age` + pop_growth_rate + 
+                    `Fertility rate` + death_rate + life_expect + `Migration rate` + `Cumulative COVID cases` + 
                     HPV_YEAR_INTRODUCTION + WHO_REGION + WB_INCOME + HPV_NATIONAL_SCHEDULE + 
-                    HPV_YEAR_INTRODUCTION + HPV_PRIM_DELIV_STRATEGY + HPV_SEX + doses_rec, 
-                  data = cc_project_data, 
+                    HPV_YEAR_INTRODUCTION + HPV_PRIM_DELIV_STRATEGY + HPV_SEX + `Number of recommended doses`, 
+                  data = cc_project_data_tree, 
                   method = "anova")  # anova method for regression trees
 
 
@@ -581,10 +549,10 @@ printcp(reg_tree)
 
 # Calculate R-squared for the tree
 # Get predicted values from the model
-predictions <- predict(reg_tree, newdata = cc_project_data)
+predictions <- predict(reg_tree, newdata = cc_project_data_tree)
 
 # Actual values (target variable)
-actual_values <- cc_project_data$coverage_diff
+actual_values <- cc_project_data_tree$coverage_diff
 
 # Calculate the residual sum of squares (RSS)
 rss <- sum((actual_values - predictions)^2)
@@ -614,7 +582,7 @@ r_sq_table <- tibble(Model = c("Full multivariable linear regression","Median ag
 r_sq_table_loc = here("results", "tables", "r_sq_table.rds")
 saveRDS(r_sq_table, file = r_sq_table_loc)
 
-##### Below is code that may or may not be added based on feedback from the proeject reviews
+##### Below is code that may or may not be added based on feedback from the project reviews
 # 
 # plibrary(randomForest)
 # install.packages("randomForest")

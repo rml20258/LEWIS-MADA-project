@@ -29,6 +29,9 @@ Loading the project data.
 data_location <- here::here("data","processed-data","project_data.rds")
 #load data
 project_data <- readRDS(data_location)
+#Restricting project_data to complete rows 
+cc_project_data <- project_data %>%
+  drop_na()
 ```
 
 
@@ -37,7 +40,7 @@ project_data <- readRDS(data_location)
 
 ```{r}
 #histogram of difference in coverage
-outcome_hist <- ggplot(project_data, aes(x = coverage_diff)) +
+outcome_hist <- ggplot(cc_project_data, aes(x = coverage_diff)) +
   geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
   labs(
     x = "Difference in HPV vaccination coverage from 2022 to 2019",
@@ -54,7 +57,7 @@ ggsave(outcome_hist_log, width = 8, height = 6, dpi = 300)
 
 #### Creating "Table 1" to show the distribution of each characteristic
 ```{r}
-  table1 <- project_data %>% dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>% #Reordering the variables into the order I want displayed in the table
+  table1 <- cc_project_data %>% dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>% #Reordering the variables into the order I want displayed in the table
   dplyr::select(coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, Cumulative_death_rate, HPV_NATIONAL_SCHEDULE, HPV_YEAR_INTRODUCTION, HPV_PRIM_DELIV_STRATEGY, HPV_SEX, doses_rec, WHO_REGION, WB_INCOME, total_pop,  total_pop, pop_density, median_age, pop_growth_rate, fertility_rate, death_rate, life_expect, migration) %>%
   tbl_summary(
     type = all_continuous() ~ "continuous2",
@@ -81,7 +84,7 @@ ggsave(outcome_hist_log, width = 8, height = 6, dpi = 300)
       migration ~ 1
     )) %>%
   modify_header(
-    stat_0 = "**n/N (%), mean (sd), or median (IQR),** N = {n}") %>%
+    stat_0 = "**n/N (%), mean (SD), or median (IQR),** N = {n}") %>%
   modify_footnote(all_stat_cols() ~ NA) %>%
   modify_table_styling(
     columns = label,    # left aligning "label" column
@@ -102,7 +105,7 @@ word_list <- c("coverage_2022", "coverage_2019", "coverage_diff", "Cumulative_ca
     "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "doses_rec", "WHO_REGION", "WB_INCOME", 
     "total_pop", "pop_density", "median_age", "pop_growth_rate", "fertility_rate", 
     "death_rate", "life_expect", "migration")
-table1_prelim <- project_data %>%
+table1_prelim <- cc_project_data %>%
   dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
   dplyr::select(
     coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, 
@@ -135,10 +138,10 @@ table1_prelim <- project_data %>%
     )
   ) %>%
   modify_header(
-    stat_0 = "n/N (%), mean (sd), or median (IQR), N = {n}",
+    stat_0 = "n/N (%), mean (SD), or median (IQR), N = {n}",
     label = "Characteristic"
   ) %>% as_tibble() %>%
-  mutate(`n/N (%), mean (sd), or median (IQR), N = 100` = if_else(is.na(`n/N (%), mean (sd), or median (IQR), N = 100`), " ", `n/N (%), mean (sd), or median (IQR), N = 100`))
+  mutate(`n/N (%), mean (SD), or median (IQR), N = 98` = if_else(is.na(`n/N (%), mean (SD), or median (IQR), N = 98`), " ", `n/N (%), mean (SD), or median (IQR), N = 98`))
 
 saveRDS(table1_prelim, here("results","tables","table1_tib.rds"))
 
@@ -167,8 +170,8 @@ saveRDS(table1_df, here("results","tables","table1_df.rds"))
 tab_1 <- gtsave(table1, filename = here("results","tables","table1.png"), expand = 10)
 
 saveRDS(table1, here("results","tables","table1.rds"))
-save_as_image(as_flex_table(table1), path = here("results","tables","table1.png"))
-as_flextable(table1_display)
+#save_as_image(as_flex_table(table1), path = #here("results","tables","table1.png"))
+#as_flextable(table1_display)
 
 
 
@@ -181,7 +184,7 @@ Because table rendering to Word appears broken right now, I'll split up the tabl
 # Process the data and create a summary table using dplyr
 coverage_covid <- c("coverage_2022", "coverage_2019", "coverage_diff", "Cumulative_case_rate", 
     "Cumulative_death_rate")
-table1_cov_covid <- project_data %>%
+table1_cov_covid <- cc_project_data %>%
   dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
   dplyr::select(
     coverage_2022, coverage_2019, coverage_diff, Cumulative_case_rate, Cumulative_death_rate
@@ -201,10 +204,10 @@ table1_cov_covid <- project_data %>%
     )
   ) %>%
   modify_header(
-    stat_0 = "Mean (sd) or median (IQR), N = {n}",
+    stat_0 = "Mean (SD) or median (IQR), N = {n}",
     label = "Characteristic"
   ) %>% as_tibble() %>%
-  mutate(`Mean (sd) or median (IQR), N = 100` = if_else(is.na(`Mean (sd) or median (IQR), N = 100`), " ", `Mean (sd) or median (IQR), N = 100`)) %>%
+  mutate(`Mean (SD) or median (IQR), N = 98` = if_else(is.na(`Mean (SD) or median (IQR), N = 98`), " ", `Mean (SD) or median (IQR), N = 98`)) %>%
   gt() %>%
   tab_style(
     style = cell_text(weight = "bold"), # Bold text
@@ -222,6 +225,13 @@ table1_cov_covid <- project_data %>%
     table.font.size = px(10),        # Set font size
     data_row.padding = px(1),        # Reduce row padding
     column_labels.padding = px(2)    # Reduce padding in column headers
+  )  %>% 
+  text_case_match(
+    "coverage_2022" ~ "2022 HPV vaccination coverage",
+    "coverage_2019" ~ "2019 HPV vaccination coverage",
+    "coverage_diff" ~ "Coverage difference between 2022 and 2019",
+    "Cumulative_case_rate" ~ "Cumulative COVID cases",
+    "Cumulative_death_rate" ~ "Cumulative COVID deaths"
   )
 
 gtsave(table1_cov_covid, filename = here("results","tables","table1_cov_covid.png"), expand = 15)
@@ -232,7 +242,7 @@ gtsave(table1_cov_covid, filename = here("results","tables","table1_cov_covid.pn
 # Process the data and create a summary table using dplyr
 vac_program <- c("HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", 
     "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "doses_rec")
-table1_vac_program <- project_data %>%
+table1_vac_program <- cc_project_data %>%
   dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
   dplyr::select(
     HPV_NATIONAL_SCHEDULE, HPV_YEAR_INTRODUCTION, 
@@ -249,10 +259,10 @@ table1_vac_program <- project_data %>%
     )
   ) %>%
   modify_header(
-    stat_0 = "n/N (%), mean (sd), or median (IQR), N = {n}",
+    stat_0 = "n/N (%), mean (SD), or median (IQR), N = {n}",
     label = "Characteristic"
   ) %>% as_tibble() %>%
-  mutate(`n/N (%), mean (sd), or median (IQR), N = 100` = if_else(is.na(`n/N (%), mean (sd), or median (IQR), N = 100`), " ", `n/N (%), mean (sd), or median (IQR), N = 100`)) %>% #Replacing NA with a space so that NA doesn't get printed in the table
+  mutate(`n/N (%), mean (SD), or median (IQR), N = 98` = if_else(is.na(`n/N (%), mean (SD), or median (IQR), N = 98`), " ", `n/N (%), mean (SD), or median (IQR), N = 98`)) %>% #Replacing NA with a space so that NA doesn't get printed in the table
   gt() %>%
   tab_style(
     style = cell_text(weight = "bold"), # Bold text
@@ -270,17 +280,24 @@ table1_vac_program <- project_data %>%
     table.font.size = px(10),        # Set font size
     data_row.padding = px(1),        # Reduce row padding
     column_labels.padding = px(2)    # Reduce padding in column headers
+  ) %>% 
+  text_case_match(
+    "HPV_NATIONAL_SCHEDULE" ~ "National HPV vaccination schedule",
+    "HPV_YEAR_INTRODUCTION" ~ "Year of HPV vaccine introduction",
+    "HPV_PRIM_DELIV_STRATEGY" ~ "Primary vaccine delivery strategy",
+    "HPV_SEX" ~ "Genders vaccinated",
+    "doses_rec" ~ "Number of recommended doses"
   )
 
 gtsave(table1_vac_program, filename = here("results","tables","table1_vac_program.png"), expand = 15)
 
 ###########
-#This is creating the combined table 1 that can be used to pull numbers from 
+#This is creating the sociodemographics table for printing
 # Process the data and create a summary table using dplyr
 demo_list <- c("WHO_REGION", "WB_INCOME", 
     "total_pop", "pop_density", "median_age", "pop_growth_rate", "fertility_rate", 
     "death_rate", "life_expect", "migration")
-table1_demo <- project_data %>%
+table1_demo <- cc_project_data %>%
   dplyr::select(-CODE, -CODE2, -Country, -year_covid) %>%
   dplyr::select(
     WHO_REGION, WB_INCOME, 
@@ -305,10 +322,10 @@ table1_demo <- project_data %>%
     )
   ) %>%
   modify_header(
-    stat_0 = "Mean (sd) or median (IQR), N = {n}",
+    stat_0 = "Mean (SD) or median (IQR), N = {n}",
     label = "Characteristic"
   ) %>% as_tibble() %>%
-  mutate(`Mean (sd) or median (IQR), N = 100` = if_else(is.na(`Mean (sd) or median (IQR), N = 100`), " ", `Mean (sd) or median (IQR), N = 100`)) %>%
+  mutate(`Mean (SD) or median (IQR), N = 98` = if_else(is.na(`Mean (SD) or median (IQR), N = 98`), " ", `Mean (SD) or median (IQR), N = 98`)) %>%
   gt() %>%
   tab_style(
     style = cell_text(weight = "bold"), # Bold text
@@ -326,6 +343,24 @@ table1_demo <- project_data %>%
     table.font.size = px(8),        # Set font size
     data_row.padding = px(1),        # Reduce row padding
     column_labels.padding = px(2)    # Reduce padding in column headers
+  ) %>% 
+  text_case_match(
+    "WHO_REGION" ~ "WHO region",
+    "AFR" ~ "African region",
+    "AMR" ~ "Region of the Americas",
+    "EMR" ~ "Eastern Mediterranean region",
+    "EUR" ~ "European region",
+    "SEAR" ~ "South-East Asian region",
+    "WPR" ~ "Western Pacific region",
+    "WB_INCOME" ~ "World Bank income level",
+    "total_pop" ~ "Total population (thousands)",
+    "pop_density" ~ "Population density (persons per square km)",
+    "median_age" ~ "Median age",
+    "pop_growth_rate" ~ "Population growth rate (%)",
+    "fertility_rate" ~ "Total fertility rate (live births/woman)",
+    "death_rate" ~ "Crude death rate (deaths per 1000 people)",
+    "life_expect" ~ "Life expectancy at birth (years)",
+    "migration" ~ "Net migration rate (per 1000 people)"
   )
 
 gtsave(table1_demo, filename = here("results","tables","table1_demo.png"), expand = 55)
@@ -339,17 +374,17 @@ gtsave(table1_demo, filename = here("results","tables","table1_demo.png"), expan
 
 ```{r}
 
-scatter_case_covdiff <- project_data %>%
+scatter_case_covdiff <- cc_project_data %>%
   ggplot(aes(Cumulative_case_rate,coverage_diff)) + geom_point() + geom_smooth(method = lm) +
   labs(
-    x = "Number of COVID cases in 2020-2022 per 100,000 persons",
+    x = "Cumulative number of COVID cases in 2020-2022 per 100,000 persons",
     y = "Difference in HPV vaccination coverage between 2022 and 2019"
   ) 
 scatter_case_covdiff_loc <- here("results","figures","scatter_case_covdiff.png")
 # Save the last plot created as a PNG
 ggsave(scatter_case_covdiff_loc, width = 8, height = 6, dpi = 300)
 
-scatter_death_covdiff <- project_data %>%
+scatter_death_covdiff <- cc_project_data %>%
   ggplot(aes(Cumulative_death_rate, coverage_diff)) + geom_point() + geom_smooth(method = lm) +
   labs(
     x = "Number of COVID deaths in 2020-2022 per 100,000 persons",
@@ -358,6 +393,79 @@ scatter_death_covdiff <- project_data %>%
 scatter_death_covdiff_loc <- here("results","figures","scatter_death_covdiff.png")
 # Save the last plot created as a PNG
 ggsave(scatter_death_covdiff_loc, width = 8, height = 6, dpi = 300)
+```
+
+#### Creating bivariate plots for demographics and the outcome
+```{r}
+
+
+#Violin plots of the outcome by each categorical variable
+demo1 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, WHO_REGION)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "WHO region")
+
+demo2 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, WB_INCOME)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Country income level")
+
+demo3 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, total_pop)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Total population (in thousands)")
+
+demo4 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, pop_density)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Population density (persons per square km)")
+
+#Building 4 panel figure of country demographics
+bivar_demo_1 <- (demo1 | demo2) / (demo3 | demo4)
+bivar_demo_1_loc <- here("results","figures","bivar_demo_1.png")
+# Save the plot created as a PNG
+ggsave(bivar_demo_1_loc, plot = bivar_demo_1, width = 8, height = 6, dpi = 300)
+
+
+demo5 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, median_age)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Median age of population")
+
+demo6 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, fertility_rate)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Fertility rate (live births per woman)")
+
+demo7 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, death_rate)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Death rate (deaths per 1,000 population)")
+
+demo8 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, life_expect)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Life expectancy (in years)")
+
+demo9 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, migration)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Migration rate (per 1000 population)")
+
+#Building 5 panel figure of the rest of the demographics
+bivar_demo_2 <- (demo5 | demo6 | demo7) / (demo8 | demo9)
+bivar_demo_2_loc <- here("results","figures","bivar_demo_2.png")
+# Save the plot created as a PNG
+ggsave(bivar_demo_2_loc, plot = bivar_demo_2, width = 8, height = 6, dpi = 300)
+
+#Building 9 panel demographic figure
+demo_fig_loc <- here("results","figures","demo_fig.png")
+demo_fig <- (demo1 | demo2 | demo3) / (demo4 | demo5 | demo6) / (demo7 | demo8 | demo9) 
+ggsave(demo_fig_loc, plot = demo_fig, width = 8, height = 10, dpi = 300)
+
+#Vaccination variables
+vac1 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, HPV_NATIONAL_SCHEDULE)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "National vaccine schedule")
+
+vac2 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, HPV_PRIM_DELIV_STRATEGY)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Primary vaccination delivery strategy")
+
+vac3 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, HPV_SEX)) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Genders vaccinated")
+
+vac4 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, as.factor(doses_rec))) + geom_violin() + labs(x = "Difference in vaccination coverage", y = "Number of recommended doses")
+
+vac5 <- cc_project_data %>%
+  ggplot(aes(coverage_diff, HPV_YEAR_INTRODUCTION)) + geom_point() + geom_smooth() + labs(x = "Difference in vaccination coverage", y = "Year of vaccine introduction")
+
+#Building 5 panel figure of vaccination program variables
+bivar_vac <- (vac1 | vac2 | vac3) / (vac4 | vac5)
+bivar_vac_loc <- here("results","figures","bivar_vac.png")
+# Save the plot created as a PNG
+ggsave(bivar_vac_loc, plot = bivar_vac, width = 8, height = 6, dpi = 300)
 ```
 
 
@@ -370,7 +478,7 @@ library(rpart.plot)
 
 # Fit a regression tree model
 reg_tree <- rpart(coverage_diff ~ total_pop + pop_density + median_age + pop_growth_rate + fertility_rate + death_rate + life_expect + migration + Cumulative_case_rate + Cumulative_death_rate + HPV_YEAR_INTRODUCTION + WHO_REGION + WB_INCOME + HPV_NATIONAL_SCHEDULE + HPV_YEAR_INTRODUCTION + HPV_PRIM_DELIV_STRATEGY + HPV_SEX + doses_rec, 
-                  data = project_data, 
+                  data = cc_project_data, 
                   method = "anova")  # anova method for regression trees
 
 
