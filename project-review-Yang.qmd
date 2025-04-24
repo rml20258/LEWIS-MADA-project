@@ -1,0 +1,181 @@
+---
+title: Project Review Overall Score - 3
+author: Guozheng Yang
+date: 04/21/2025
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+Title of project: Effect of COVID-19 burden on changes in HPV vaccination coverage among females between 2019 and 2022
+
+Name of project author(s): Rayleen Lewis
+
+Name of project reviewer: Guozheng Yang
+
+
+
+# Specific project content evaluation
+
+## Background, Context and Motivation
+
+### Feedback and Comments
+
+The background is comprehensive and well-referenced, providing a clear explanation of the importance of HPV vaccination and the global impact of COVID-19 on healthcare services. Given the timing of the disruptions caused by COVID-19, this motivation is both logical and timely. The author did a great job outlining research gaps in existing literature and how these gaps motivate this study. Additionally, the author clearly stated how this study addresses the gaps by quantifying the impact of COVID-19 burden rather than relying on simple pre/post comparisons.
+
+One minor suggestion is to compare HPV vaccination coverage rates when introducing the difference in HPV burdens among different countries. I am not sure if this information is available online, and it can be foreseen that there should be a positive correlation. But including some basic statistics will strengthen the motivation of this study.
+
+### Summary assessment
+
+* strong contextualization and motivation
+
+
+
+## Question description
+
+### Feedback and Comments
+
+The research question is clearly stated and directly relates to the data available. The hypothesis is intuitive and well framed that higher COVID-19 burden would correlate with greater drops in HPV vaccination coverage. The secondary objective about building the tree model is also clearly described and adds on the depth of this study. 
+
+### Summary assessment
+
+* question/hypotheses fully clear
+
+
+
+## Data description
+
+### Feedback and Comments
+
+The manuscript provides detailed information about all data sources, including hyper-links and download dates. The variables are described with sufficient clarity, and the inclusion of WHO, UN, and COVID dashboards ensures credibility. Although not every variable is described in the main text, the reference to supplementary materials is appropriate. I particularly like how the author structure the README file for all data files, with each data set clearly listed. This is easy for reviewers to follow and saved me a lot of time. Also, good job with the hyper-links! 
+
+I praise the great effort the author put in cleaning the raw data.
+
+### Summary assessment
+
+* source and overall structure of data well explained
+
+
+
+## Data wrangling and exploratory analysis
+
+### Feedback and Comments
+
+The data cleaning process is clearly described, with reasonable exclusions. Exploratory visualizations (histograms, scatterplots, violin plots) are well chosen and support the narrative. While alternatives for data transformation or imputation are not discussed, the decision to use complete case analysis is justified given the small number of incomplete cases. The tables list all necessary statistics for readers to understand the distribution of each variable. The code file for data processing is very well structured, with a clear logic flow and important annotations attached. The exploratory text further improves the readability of this data wrangling process. 
+
+Though the data cleaning process is pretty clear in the code file, I suggest the author to include the exclusion criteria in the main text. One or two sentences will be enough. 
+
+### Summary assessment
+
+* essentially no weaknesses in wrangling and exploratory component
+
+
+
+## Appropriateness of Analysis
+
+### Feedback and Comments
+
+The author conducted a comprehensive analysis not only addressing the proposed research question but also covering contents from this course. The decision to use LASSO for variable selection and to explore regression trees for interpretability demonstrates thoughtful methodology. The author also examined the residual plots for a throughout diagnosis of the fitting results, with limitations of the models acknowledged. 
+
+I wonder if the author tried generalized linear models, since the regular multivariable regression is likely limited considering the unique distribution of the response. To integrate it into the LASSO model will also be interesting. Additionally, the author may want to briefly justify the use of R-squared for model comparison instead of RMSE. One sentence or two will be good enough. 
+
+### Summary assessment
+
+* strong and reasonable analysis
+
+
+
+## Presentation
+
+### Feedback and Comments
+
+The figures and tables are clean, relevant, and well-labeled. Diagnostic plots and R-square comparisons help readers evaluate model performance. All visuals are logically placed within the manuscript. 
+
+A minor suggestion is to improve figure captions for standalone interpretability. For example, the author could include a detailed explanation of the blue lines and gray areas in captions of Figure 3 and Figure 4. It would be great if the readers can get a comprehensive understanding of the results by just looking at the figures. 
+
+### Summary assessment
+
+* results are very well presented
+
+
+
+## Discussion/Conclusions
+
+### Feedback and Comments
+
+The discussion is thoughtful and well-balanced, highlighting the implications for public health practice and the importance of data variability and methodology across countries. The author also discussed both strengths and limitations of this study, which deepens the discussion section. The conclusion is also policy-relevant and grounded in the results.
+
+### Summary assessment
+
+* strong, complete and clear discussion
+
+
+
+## Further comments
+
+Excellent work overall. The tree model is a strong highlight of the analysis and adds real-world applicability for future policy planning. One small edit: check for a typo in "gender nuetral" (should be "gender neutral").
+
+
+
+# Overall project content evaluation
+
+## Structure
+
+### Feedback and Comments
+
+The folder and file structure appear straightforward. File names are intuitive, and no unnecessary files are included. I also like the detailed instructions provided in each README file. I could easily follow the workflow in this project. 
+
+### Summary assessment
+
+* well structured
+
+
+## Documentation 
+
+### Feedback and Comments
+
+The author retained the structural framework of the template folders. Overall, the project folder is well-organized: clean, concise, and free of redundant files. Each executable file contains a necessary README file in the same folder, which greatly enhances usability for readers. Additionally, the executable files are sufficiently annotated to explain each step, further demonstrating the author's attention to clarity and reproducibility.
+
+### Summary assessment
+
+* fully and well documented
+
+
+
+## Reproducibility
+
+### Feedback and Comments
+
+I ran through all the code files on my end without errors. The reproducibility of this project is confirmed. The author dropped part of the code for analysis, but I don't consider it as redundant. Overall, great work! 
+
+I also saw the author inserted tables in the format of pictures. This is likely because of the rendering issue. I still give the author full credits, since I had the same issue before and I know it is hard to fix. 
+
+### Summary assessment
+
+* fully reproducible without issues
+
+
+
+## Thoroughness
+
+### Feedback and Comments
+
+The study is comprehensive and considers multiple analytic strategies. The inclusion of LASSO and tree methods strengthens the findings and offers nuanced insights beyond traditional linear modeling. Limitations are appropriately considered and well discussed. The author also listed implications for public health policy makers, which enhances the applicability of the conclusion of this study. 
+
+### Summary assessment
+
+* strong level of thorougness
+
+
+
+## Further comments
+
+The project addresses an important global health issue and demonstrates a solid understanding of statistical modeling. Great use of public data and thoughtful application of advanced methods to enhance interpretability and policy relevance. The project folder is also very well organized, it is easy for me to follow each step and I believe it will be the same case for other readers. 
+
+I think the author did a great job choosing the most appropriate models to explore the research question. So I will not complain for not including comparisons across different models. I think the contents included in this project is good enough to show what the author learned from this class. 
+
+
