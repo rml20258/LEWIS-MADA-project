@@ -106,8 +106,8 @@ non_matches <- combo %>%
 print(non_matches)
 #One country, Côte d'Ivoire, came up in this check, however, this only came up because the name of the country has some formatting issues in one of the datasets, this isn't a merging problem
 
-#Data are 
-proc_freq(combo, c("WHO_REGION", "WB_INCOME", "HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "HPV_INT_DOSES"), options = "missing")
+#Data are very complete
+procs::proc_freq(combo, tables = c("WHO_REGION", "WB_INCOME", "HPV_NATIONAL_SCHEDULE", "HPV_YEAR_INTRODUCTION", "HPV_PRIM_DELIV_STRATEGY", "HPV_SEX", "HPV_INT_DOSES"), options = "missing")
 
 #Data were very complete, at most variables had 1 country with missing data
 #Reviewing the countries with missing data on any of the variables

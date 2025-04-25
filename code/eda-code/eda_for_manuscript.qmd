@@ -4,7 +4,7 @@ format: html
 ---
 
 # Overview
-All exploratory figures and tables presented in the manuscript are coded in this code file.
+All exploratory figures and tables presented in the manuscript are coded in this code file. For all EDA analyses conducted for this project (including those not included in the manuscript), please see the "eda.qmd" file.
 
 #### Setup
 
@@ -19,6 +19,8 @@ library(gtsummary)
 library(flextable)
 library(gtExtras)
 library(kableExtra)
+library(patchwork)
+library(tidyr)
 ```
 
 

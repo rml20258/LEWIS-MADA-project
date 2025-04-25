@@ -5,6 +5,8 @@ output: html_document
 ---
 
   
+# Description
+This EDA file includes all EDA conducted for the project. For EDA analyses included in the mansucript, please see the "eda_for_mansucript.qmd" file.
 
 # Setup
 
@@ -36,7 +38,7 @@ The code below calculates the distribution of each categorical variable and basi
 str(project_data)
 
 #Getting distributions for categorical variables
-freq_table <- proc_freq(project_data, tables = c("WHO_REGION","WB_INCOME","HPV_NATIONAL_SCHEDULE","HPV_YEAR_INTRODUCTION","HPV_PRIM_DELIV_STRATEGY","HPV_SEX","doses_rec"), options = "missing", output = out)
+freq_table <- procs::proc_freq(project_data, tables = c("WHO_REGION","WB_INCOME","HPV_NATIONAL_SCHEDULE","HPV_YEAR_INTRODUCTION","HPV_PRIM_DELIV_STRATEGY","HPV_SEX","doses_rec"), options = "missing", output = out)
 freqtable_file = here("results", "tables", "freq_table_results.rds")
 saveRDS(freq_table, file = freqtable_file)
 
